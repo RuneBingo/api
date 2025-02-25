@@ -4,32 +4,40 @@ REST API for RuneBingo, an application that lets Old School RuneScape players cr
 
 ## Project setup
 
+Install dependencies
+
 ```bash
-$ npm install
+npm install
+```
+
+Copy the `.env.example` file to `.env` and fill in the necessary values.
+
+```bash
+cp .env.example .env
 ```
 
 ## Compile and run the project
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # production mode
-$ npm run start:prod
+npm run start:prod
 ```
 
 ## Run tests
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
