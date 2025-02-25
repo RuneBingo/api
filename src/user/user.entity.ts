@@ -1,15 +1,19 @@
-import { Column, Entity, Generated, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Generated, OneToMany } from 'typeorm';
 
-import Session from '../session/session.entity';
+import { Session } from '../session/session.entity';
+import { StrongEntityParanoid } from '../db/base.entity';
 
 @Entity()
-class User {
-  @PrimaryGeneratedColumn()
-  readonly id: number;
-
+export class User extends StrongEntityParanoid {
   @Column({ type: 'uuid', unique: true })
   @Generated('uuid')
   readonly uuid: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  disabledAt: Date | null;
+
+  @Column({ nullable: true })
+  disabledBy: number | null;
 
   @Column({ unique: true, length: 255 })
   email: string;
@@ -22,9 +26,6 @@ class User {
 
   @Column({ nullable: false, default: false })
   isSuperAdmin: boolean;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  disabledAt: Date | null;
 
   @OneToMany(() => Session, (session: Session) => session.user)
   sessions: Promise<Session[]>;

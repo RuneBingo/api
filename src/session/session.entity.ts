@@ -1,11 +1,9 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
 import User from '../user/user.entity';
+import { StrongEntity } from '../db/base.entity';
 
 @Entity()
-class Session {
-  @PrimaryGeneratedColumn()
-  readonly id: number;
-
+export class Session extends StrongEntity {
   @Column({ unique: true, type: 'uuid' })
   @Generated('uuid')
   readonly uuid: string;
@@ -33,9 +31,6 @@ class Session {
 
   @Column({ length: 255 })
   location: string;
-
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
   signedOutAt: Date | null = null;
@@ -65,5 +60,3 @@ class Session {
     this.signedOutAt = new Date();
   }
 }
-
-export default Session;
