@@ -1,13 +1,15 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import Session from '../session/session.entity';
+import User from '../user/user.entity';
 
-export const entities = [];
+export const entities = [Session, User];
 
 export const migrations = [__dirname + '/migrations/**/*.ts', __dirname + '/migrations/**/*.js'];
 
 export const subscribers = [__dirname + '/subscribers/**/*.ts', __dirname + '/subscribers/**/*.js'];
 
-export default TypeOrmModule.forRootAsync({
+export const dbModule = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => {
