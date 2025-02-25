@@ -1,7 +1,7 @@
 import { Column, Entity, Generated, OneToMany } from 'typeorm';
 
-import { Session } from '../session/session.entity';
-import { StrongEntityParanoid } from '../db/base.entity';
+import { StrongEntityParanoid } from '@/db/base.entity';
+import { Session } from '@/session/session.entity';
 
 @Entity()
 export class User extends StrongEntityParanoid {
@@ -12,7 +12,7 @@ export class User extends StrongEntityParanoid {
   @Column({ type: 'timestamptz', nullable: true })
   disabledAt: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   disabledBy: number | null;
 
   @Column({ unique: true, length: 255 })
@@ -74,5 +74,3 @@ export class User extends StrongEntityParanoid {
     this.emailVerified = true;
   }
 }
-
-export default User;

@@ -1,9 +1,11 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import Session from '../session/session.entity';
-import User from '../user/user.entity';
 
-export const entities = [Session, User];
+import { Activity } from '@/activity/activity.entity';
+import { Session } from '@/session/session.entity';
+import { User } from '@/user/user.entity';
+
+export const entities = [Activity, Session, User];
 
 export const migrations = [__dirname + '/migrations/**/*.ts', __dirname + '/migrations/**/*.js'];
 

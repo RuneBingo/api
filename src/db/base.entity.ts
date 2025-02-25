@@ -14,7 +14,7 @@ export abstract class BaseEntity {
    *
    * - If the entity was created by the system, this field is `null`.
    */
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   readonly createdBy: number | null;
 
   @UpdateDateColumn({ type: 'timestamptz' })
@@ -25,7 +25,7 @@ export abstract class BaseEntity {
    *
    * - If the entity was updated by the system, this field is `null`.
    */
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   updatedBy: number | null;
 }
 
@@ -49,7 +49,7 @@ export abstract class BaseEntityParanoid extends BaseEntity {
    * - If the entity was deleted by the system, this field is `null`.
    * - If the entity is not deleted, this field is `null`.
    */
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   deletedBy: number | null;
 }
 

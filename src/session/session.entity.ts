@@ -1,6 +1,7 @@
 import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
-import User from '../user/user.entity';
-import { StrongEntity } from '../db/base.entity';
+
+import { StrongEntity } from '@/db/base.entity';
+import { User } from '@/user/user.entity';
 
 @Entity()
 export class Session extends StrongEntity {
