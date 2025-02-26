@@ -8,7 +8,7 @@ import tsParser from '@typescript-eslint/parser';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', 'src/db/migrations/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -65,7 +65,7 @@ export default tseslint.config(
           fixStyle: 'inline-type-imports',
         },
       ],
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
     settings: {
       'import/resolver': {

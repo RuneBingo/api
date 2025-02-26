@@ -17,7 +17,14 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "db:drop": "npm run typeorm schema:drop -- -d ./src/db/index.ts",
+    "db:migrate": "npm run typeorm migration:run -- -d ./src/db/index.ts",
+    "db:migration:create": "npm run typeorm -- migration:create",
+    "db:migration:generate": "npm run typeorm -- migration:generate -d ./src/db/index.ts",
+    "db:migration:revert": "npm run typeorm migration:revert -- -d ./src/db/index.ts",
+    "db:reset": "npm run db:drop && npm run migrate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -30,6 +37,7 @@
     "class-validator": "^0.14.1",
     "connect-redis": "^8.0.1",
     "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
     "express-session": "^1.18.1",
     "pg": "^8.13.3",
     "redis": "^4.7.0",

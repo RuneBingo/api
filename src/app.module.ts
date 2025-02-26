@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { configModule } from './config';
 import { cqrsModule } from './cqrs';
-import { dbModule } from './db/db.module';
+import { dbModule } from './db';
 import { RedisModule } from './redis/redis.module';
 import { SessionModule } from './session/session.module';
 import { UserModule } from './user/user.module';

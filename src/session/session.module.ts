@@ -1,13 +1,16 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisStore } from 'connect-redis';
 import * as session from 'express-session';
 
 import { RedisModule } from '@/redis/redis.module';
 import { RedisService } from '@/redis/redis.service';
 
+import { Session } from './session.entity';
+
 @Module({
-  imports: [RedisModule],
+  imports: [RedisModule, TypeOrmModule.forFeature([Session])],
 })
 export class SessionModule implements NestModule {
   constructor(

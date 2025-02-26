@@ -1,9 +1,13 @@
-import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Generated, Index, JoinColumn, ManyToOne } from 'typeorm';
 
 import { StrongEntity } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
 
 @Entity()
+@Index(['userId', 'signedOutAt', 'expiresAt'])
+@Index(['userId', 'signedOutAt'])
+@Index(['userId', 'expiresAt'])
+@Index(['userId', 'lastSeenAt'])
 export class Session extends StrongEntity {
   @Column({ unique: true, type: 'uuid' })
   @Generated('uuid')

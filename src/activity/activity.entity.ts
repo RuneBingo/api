@@ -7,7 +7,9 @@ export type ActivityParameters = {
 };
 
 @Entity()
+@Index(['key'])
 @Index(['trackableType', 'trackableId'])
+@Index(['trackableType', 'trackableId', 'key'])
 export class Activity extends StrongEntity {
   @Column()
   trackableType: string;
