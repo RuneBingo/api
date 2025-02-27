@@ -1,8 +1,7 @@
 {
   "name": "runebingo-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "REST API for RuneBingo, an application that lets Old School RuneScape players create and manage bingo events.",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -32,6 +31,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/cqrs": "^11.0.2",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.0.5",
     "@nestjs/typeorm": "^11.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -43,6 +43,7 @@
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "swagger-themes": "^1.4.3",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

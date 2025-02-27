@@ -13,9 +13,11 @@
     "sourceMap": true,
     "outDir": "./dist",
     "moduleResolution": "node10",
-    "baseUrl": "./",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./*"]
     },
     "incremental": true,
     "skipLibCheck": true,
