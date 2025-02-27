@@ -1,3 +1,4 @@
+import { ConsoleLogger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { type NestExpressApplication } from '@nestjs/platform-express';
@@ -9,12 +10,14 @@ import { AppModule } from './app.module';
 import validationPipe from './pipes/validation.pipe';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: new ConsoleLogger({ colors: true }),
+  });
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('BACKEND_PORT') || 5000;
-  const env = configService.get<string>('NODE_ENV') || 'development';
-  const sessionSecret = configService.get<string>('SESSION_SECRET');
+  const port = configService.get<number>('BACKEND_PORT', 5000);
+  const env = configService.get<string>('NODE_ENV');
+  const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
   const isProduction = env !== 'development' && env !== 'test';
 
   app.use(cookieParser(sessionSecret));

@@ -19,9 +19,9 @@ export class SessionModule implements NestModule {
   ) {}
 
   configure(consumer: MiddlewareConsumer) {
-    const env = this.configService.get<string>('NODE_ENV', 'development');
+    const env = this.configService.get<string>('NODE_ENV');
     const isProduction = env !== 'development' && env !== 'test';
-    const sessionSecret = this.configService.get<string>('SESSION_SECRET', 'default_secret');
+    const sessionSecret = this.configService.getOrThrow<string>('SESSION_SECRET');
 
     consumer
       .apply(

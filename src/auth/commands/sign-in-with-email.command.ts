@@ -1,5 +1,7 @@
-import { type ICommand } from '@nestjs/cqrs';
+import { Command } from '@nestjs/cqrs';
 
-export class SignInWithEmailCommand implements ICommand {
-  constructor(public readonly email: string) {}
+export class SignInWithEmailCommand extends Command<string> {
+  constructor(public readonly email: string) {
+    super();
+  }
 }
