@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { ActivityModule } from './activity/activity.module';
+import { AuthModule } from './auth/auth.module';
+import { configModule } from './config';
+import { cqrsModule } from './cqrs';
+import { dbModule } from './db';
+import { RedisModule } from './redis/redis.module';
+import { SessionModule } from './session/session.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [configModule, dbModule, cqrsModule, SessionModule, UserModule, AuthModule, RedisModule, ActivityModule],
 })
 export class AppModule {}
