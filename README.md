@@ -55,6 +55,12 @@ docker-compose up -d
 
 The script located at `./scripts/db-setup.sh` will automatically create the additional database needed for testing.
 
+Then, run the migrations to set up the database schema:
+
+```bash
+npm run migrate
+```
+
 ## Compile and run the project
 
 ```bash

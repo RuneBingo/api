@@ -13,7 +13,7 @@ export class SignInWithEmailHandler {
 
     const code = Math.random().toString(36).substring(2, 8);
 
-    await this.redisService.set(`auth:email:${email}`, code, 300);
+    await this.redisService.set(`auth:email:${email}`, code, (30).minutes);
 
     return { code };
   }

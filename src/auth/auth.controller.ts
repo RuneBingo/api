@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-import type { ApiRequest } from '@/extensions/express.extensions';
 import { CreateSessionForUserCommand } from '@/session/commands/create-session-for-user.command';
 import { SignOutSessionByUuidCommand } from '@/session/commands/sign-out-session-by-uuid.command';
 import type { SessionMethod } from '@/session/session.entity';
@@ -30,7 +29,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Sign out from current session' })
   @ApiResponse({ status: 201, description: 'Signed out successfully.' })
   @HttpCode(201)
-  async signOut(@Request() req: ApiRequest) {
+  async signOut(@Request() req: Request) {
     const { uuid } = req.session;
     if (!uuid) return;
 
@@ -57,7 +56,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Verify email authentication code' })
   @ApiResponse({ status: 201, description: 'Signed in successfully.' })
   @ApiUnauthorizedResponse({ description: 'The code is invalid or has expired.' })
-  async verifyEmailCode(@Body() body: VerifyEmailCodeDto, @Request() req: ApiRequest) {
+  async verifyEmailCode(@Body() body: VerifyEmailCodeDto, @Request() req: Request) {
     const { email, code } = body;
 
     const { valid } = await this.queryBus.execute(new VerifyEmailCodeQuery(email, code));
@@ -77,7 +76,7 @@ export class AuthController {
     await this.createSessionForUser(req, user, 'email');
   }
 
-  private async createSessionForUser(@Request() req: ApiRequest, user: User, method: SessionMethod) {
+  private async createSessionForUser(@Request() req: Request, user: User, method: SessionMethod) {
     const { headers, ip, session } = req;
 
     if (session.uuid) {
@@ -90,7 +89,7 @@ export class AuthController {
         method,
         ip: ip || 'unknown',
         sessionId: session.id,
-        userAgent: headers['user-agent'] || 'unknown',
+        userAgent: (headers['user-agent'] as string) || 'unknown',
       }),
     );
 

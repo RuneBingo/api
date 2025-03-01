@@ -30,6 +30,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return this.client;
   }
 
+  /** Sets a key-value pair in Redis. If `ttl` is provided, the key will expire after `ttl` seconds. */
   async set(key: string, value: string, ttl?: number) {
     await this.client.set(key, value, { EX: ttl });
   }

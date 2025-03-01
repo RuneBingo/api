@@ -4,8 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import { type NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 
+import '@/extensions/express.extensions';
+import { setupOpenApi } from '@/extensions/swagger.extensions';
+import '@/extensions/number.extensions';
+
 import { AppModule } from './app.module';
-import { setupOpenApi } from './extensions/swagger.extensions';
 import validationPipe from './pipes/validation.pipe';
 
 async function bootstrap() {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
@@ -5,19 +6,23 @@ import type {
 } from 'express';
 import type { Session as ExpressSession } from 'express-session';
 
-import type { Session } from '@/session/session.entity';
+import type { Session as SessionEntity } from '@/session/session.entity';
 import type { User } from '@/user/user.entity';
 
-export type ApiSession = ExpressSession & {
-  uuid?: string;
-};
+declare global {
+  interface Session extends ExpressSession {
+    uuid?: string;
+  }
 
-export type ApiRequest = ExpressRequest & {
-  session: ApiSession;
-  userEntity?: User;
-  sessionEntity?: Session;
-};
+  interface Request extends ExpressRequest {
+    session: Session;
+    userEntity?: User;
+    sessionEntity?: SessionEntity;
+  }
 
-export type ApiResponse = ExpressResponse;
+  interface Response extends ExpressResponse {}
 
-export type ApiNextFunction = ExpressNextFunction;
+  interface NextFunction extends ExpressNextFunction {}
+}
+
+export {};
