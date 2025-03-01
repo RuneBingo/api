@@ -16,7 +16,7 @@ export function setupOpenApi(app: NestExpressApplication, path: string) {
 
   const documentFactory = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup(path, app, documentFactory, {
-    jsonDocumentUrl: `open-api`,
+    jsonDocumentUrl: `openapi`,
     customCss: new SwaggerTheme().getBuffer(SwaggerThemeNameEnum.DARK_MONOKAI),
   });
 }

@@ -8,7 +8,7 @@ import { Session } from '@/session/session.entity';
 export class User extends StrongEntityParanoid {
   @Column({ type: 'uuid', unique: true })
   @Generated('uuid')
-  readonly uuid: string;
+  uuid: string;
 
   @Column({ type: 'timestamptz', nullable: true })
   disabledAt: Date | null = null;

@@ -7,7 +7,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Index, PrimaryGeneratedColu
  */
 export abstract class BaseEntity {
   @CreateDateColumn({ type: 'timestamptz' })
-  readonly createdAt: Date;
+  createdAt: Date;
 
   /**
    * The ID of the user who created the entity.
@@ -15,10 +15,10 @@ export abstract class BaseEntity {
    * - If the entity was created by the system, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  readonly createdBy: number | null = null;
+  createdBy: number | null = null;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  readonly updatedAt: Date;
+  updatedAt: Date;
 
   /**
    * The ID of the user who last updated the entity.
@@ -43,10 +43,10 @@ export abstract class StrongEntity {
    * If you need to expose a unique identifier to the client, you should instead add a UUID field to this entity.
    */
   @PrimaryGeneratedColumn()
-  readonly id: number;
+  id: number;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  readonly createdAt: Date;
+  createdAt: Date;
 
   /**
    * The ID of the user who created the entity.
@@ -57,7 +57,7 @@ export abstract class StrongEntity {
   createdBy: number | null = null;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  readonly updatedAt: Date;
+  updatedAt: Date;
 
   /**
    * The ID of the user who last updated the entity.

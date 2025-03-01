@@ -13,7 +13,7 @@ export type SessionMethod = 'email';
 export class Session extends StrongEntity {
   @Column({ unique: true, type: 'uuid' })
   @Generated('uuid')
-  readonly uuid: string;
+  uuid: string;
 
   @Column({ length: 255 })
   sessionID: string;

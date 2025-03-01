@@ -2,6 +2,28 @@
 
 REST API for RuneBingo, an application that lets Old School RuneScape players create and manage bingo events.
 
+## Architecture
+
+This project is built using the [NestJS](https://nestjs.com/) framework, implementing the [CQRS](https://docs.nestjs.com/recipes/cqrs) pattern. It uses [TypeORM](https://typeorm.io/) as the ORM and [PostgreSQL](https://www.postgresql.org/) as the main database.
+
+Controllers receive HTTP requests and send commands and queries to the appropriate bus. Commands and queries are then handled by their corresponding handlers, which read from or write to the database. Commands may also emit events, which are handled by their corresponding handlers. Events can then cause side effects, such as executing commands for sending emails, creating activities or notifications, etc.
+
+```mermaid
+flowchart TB;
+    Clients -- Send --> Requests;
+    Requests -- that pass through... --> Guards;
+    Guards -- ...then are handled by --> Controllers;
+    Controllers -- Emit --> Commands;
+    Commands -- are handled by --> CommandHandlers
+    Controllers -- Emit --> Queries;
+    Queries -- are handled by --> QueryHandlers;
+    CommandHandlers -- Read/Write --> Database;
+    CommandHandlers -- Emit --> Events;
+    QueryHandlers -- Read --> Database;
+    Events -- are handled by --> EventHandlers;
+    EventHandlers -- Emit --> Commands;
+```
+
 ## Pre-requisites
 
 - [Node.js](https://nodejs.org/en/)
