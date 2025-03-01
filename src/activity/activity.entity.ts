@@ -21,5 +21,5 @@ export class Activity extends StrongEntity {
   key: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  parameters: ActivityParameters | null;
+  parameters: ActivityParameters | null = null;
 }

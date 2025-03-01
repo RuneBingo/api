@@ -15,7 +15,7 @@ export abstract class BaseEntity {
    * - If the entity was created by the system, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  readonly createdBy: number | null;
+  readonly createdBy: number | null = null;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   readonly updatedAt: Date;
@@ -26,7 +26,7 @@ export abstract class BaseEntity {
    * - If the entity was updated by the system, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  updatedBy: number | null;
+  updatedBy: number | null = null;
 }
 
 /**
@@ -54,7 +54,7 @@ export abstract class StrongEntity {
    * - If the entity was created by the system, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  readonly createdBy: number | null;
+  createdBy: number | null = null;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   readonly updatedAt: Date;
@@ -65,7 +65,7 @@ export abstract class StrongEntity {
    * - If the entity was updated by the system, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  updatedBy: number | null;
+  updatedBy: number | null = null;
 }
 
 /**
@@ -82,7 +82,7 @@ export abstract class BaseEntityParanoid extends BaseEntity {
   @Index({ where: '"deletedAt" IS NULL' })
   @Index({ where: '"deletedAt" IS NOT NULL' })
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
-  deletedAt: Date | null;
+  deletedAt: Date | null = null;
 
   /**
    * The ID of the user who deleted the entity.
@@ -91,7 +91,11 @@ export abstract class BaseEntityParanoid extends BaseEntity {
    * - If the entity is not deleted, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  deletedBy: number | null;
+  deletedBy: number | null = null;
+
+  get isDeleted(): boolean {
+    return this.deletedAt !== null;
+  }
 }
 
 /**
@@ -108,7 +112,7 @@ export abstract class StrongEntityParanoid extends StrongEntity {
   @Index({ where: '"deletedAt" IS NULL' })
   @Index({ where: '"deletedAt" IS NOT NULL' })
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
-  deletedAt: Date | null;
+  deletedAt: Date | null = null;
 
   /**
    * The ID of the user who deleted the entity.
@@ -117,5 +121,9 @@ export abstract class StrongEntityParanoid extends StrongEntity {
    * - If the entity is not deleted, this field is `null`.
    */
   @Column({ type: 'int', nullable: true })
-  deletedBy: number | null;
+  deletedBy: number | null = null;
+
+  get isDeleted(): boolean {
+    return this.deletedAt !== null;
+  }
 }

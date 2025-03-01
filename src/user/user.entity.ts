@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Column, Entity, Generated, OneToMany } from 'typeorm';
 
 import { StrongEntityParanoid } from '@/db/base.entity';
@@ -10,10 +11,10 @@ export class User extends StrongEntityParanoid {
   readonly uuid: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  disabledAt: Date | null;
+  disabledAt: Date | null = null;
 
   @Column({ type: 'int', nullable: true })
-  disabledBy: number | null;
+  disabledBy: number | null = null;
 
   @Column({ unique: true, length: 255 })
   email: string;
@@ -38,12 +39,16 @@ export class User extends StrongEntityParanoid {
     return email.trim().toLowerCase();
   }
 
-  static normalizeUsername(username: string) {
-    return username.trim().toLowerCase();
+  static isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   changeEmail(email: string) {
     const emailNormalized = User.normalizeEmail(email);
+
+    if (!User.isValidEmail(emailNormalized)) {
+      throw new BadRequestException('Invalid email');
+    }
 
     this.email = email;
     this.emailNormalized = emailNormalized;
@@ -52,7 +57,7 @@ export class User extends StrongEntityParanoid {
 
   disable() {
     if (this.disabledAt) {
-      throw new Error('User is already disabled');
+      throw new BadRequestException('User is already disabled');
     }
 
     this.disabledAt = new Date();
@@ -60,7 +65,7 @@ export class User extends StrongEntityParanoid {
 
   enable() {
     if (!this.disabledAt) {
-      throw new Error('User is not disabled');
+      throw new BadRequestException('User is not disabled');
     }
 
     this.disabledAt = null;
@@ -68,7 +73,7 @@ export class User extends StrongEntityParanoid {
 
   verifyEmail() {
     if (this.emailVerified) {
-      throw new Error('Email is already verified');
+      throw new BadRequestException('Email is already verified');
     }
 
     this.emailVerified = true;

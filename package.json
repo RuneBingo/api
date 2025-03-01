@@ -23,7 +23,7 @@
     "db:migration:create": "npm run typeorm -- migration:create",
     "db:migration:generate": "npm run typeorm -- migration:generate -d ./src/db/index.ts",
     "db:migration:revert": "npm run typeorm migration:revert -- -d ./src/db/index.ts",
-    "db:reset": "npm run db:drop && npm run migrate"
+    "db:reset": "npm run db:drop && npm run db:migrate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -37,6 +37,7 @@
     "class-validator": "^0.14.1",
     "connect-redis": "^8.0.1",
     "cookie-parser": "^1.4.7",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "express-session": "^1.18.1",
     "pg": "^8.13.3",
@@ -44,7 +45,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "swagger-themes": "^1.4.3",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "ua-parser-js": "^2.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -96,6 +98,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    }
   }
 }

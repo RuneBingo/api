@@ -9,6 +9,10 @@ import { VerifyEmailCodeHandler } from './queries/verify-email-code.handler';
 @Module({
   imports: [RedisModule],
   controllers: [AuthController],
-  providers: [SignInWithEmailHandler, VerifyEmailCodeHandler],
+  providers: [
+    // Commands
+    SignInWithEmailHandler,
+    VerifyEmailCodeHandler,
+  ],
 })
 export class AuthModule {}

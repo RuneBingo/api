@@ -3,6 +3,8 @@ import { Column, Entity, Generated, Index, JoinColumn, ManyToOne } from 'typeorm
 import { StrongEntity } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
 
+export type SessionMethod = 'email';
+
 @Entity()
 @Index(['userId', 'signedOutAt', 'expiresAt'])
 @Index(['userId', 'signedOutAt'])
@@ -16,7 +18,7 @@ export class Session extends StrongEntity {
   @Column({ length: 255 })
   sessionID: string;
 
-  @Column({ length: 255, default: 'credentials' })
+  @Column({ length: 255, default: 'email' })
   method: string;
 
   @Column({ length: 64 })
