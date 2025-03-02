@@ -5,14 +5,24 @@ import { AuthModule } from './auth/auth.module';
 import { configModule } from './config';
 import { cqrsModule } from './cqrs';
 import { dbModule } from './db';
+import { EmailerModule } from './emailer/emailer.module';
+import { EmailerService } from './emailer/emailer.service';
 import { RedisModule } from './redis/redis.module';
 import { SessionModule } from './session/session.module';
 import { UserModule } from './user/user.module';
-import { EmailerService } from './emailer/emailer.service';
-import { EmailerModule } from './emailer/emailer.module';
 
 @Module({
-  imports: [configModule, dbModule, cqrsModule, SessionModule, UserModule, AuthModule, RedisModule, ActivityModule, EmailerModule],
+  imports: [
+    configModule,
+    dbModule,
+    cqrsModule,
+    SessionModule,
+    UserModule,
+    AuthModule,
+    RedisModule,
+    ActivityModule,
+    EmailerModule,
+  ],
   providers: [EmailerService],
 })
 export class AppModule {}

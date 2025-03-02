@@ -1,16 +1,16 @@
 import { CommandHandler } from '@nestjs/cqrs';
 
+import { EmailerService } from '@/emailer/emailer.service';
+import { VerificationEmail } from '@/emailer/templates/verification-email';
 import { RedisService } from '@/redis/redis.service';
 
 import { SignInWithEmailCommand, type SignInWithEmailResult } from './sign-in-with-email.command';
-import { EmailerService } from '@/emailer/emailer.service';
-import { VerificationEmail } from '@/emailer/templates/verification-email';
 
 @CommandHandler(SignInWithEmailCommand)
 export class SignInWithEmailHandler {
   constructor(
     private readonly redisService: RedisService,
-    private readonly emailerService: EmailerService
+    private readonly emailerService: EmailerService,
   ) {}
 
   async execute(command: SignInWithEmailCommand): Promise<SignInWithEmailResult> {
