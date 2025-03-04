@@ -25,6 +25,5 @@ import { UserModule } from './user/user.module';
     ItemsModule,
     EmailerModule,
   ],
-  providers: [EmailerService],
 })
 export class AppModule {}
