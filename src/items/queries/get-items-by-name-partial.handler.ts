@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 
 import { GetItemsByNamePartialQuery, GetItemsByNamePartialResult } from './get-items-by-name-partial.query';
-import { Item } from '../entities/item.entity';
 import { ItemDto } from '../dtos/item.dto';
+import { Item } from '../entities/item.entity';
 
 @QueryHandler(GetItemsByNamePartialQuery)
 export class GetItemsByNamePartialHandler {
@@ -22,7 +22,7 @@ export class GetItemsByNamePartialHandler {
       },
     });
 
-    const itemDtos: ItemDto[] = items.map(item => new ItemDto(item));
+    const itemDtos: ItemDto[] = items.map((item) => new ItemDto(item));
 
     return { items: itemDtos };
   }

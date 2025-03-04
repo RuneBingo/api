@@ -1,5 +1,6 @@
 import { Query } from '@nestjs/cqrs';
-import { ItemDto } from '../dtos/item.dto';
+
+import { type ItemDto } from '../dtos/item.dto';
 
 export type GetItemsByNamePartialResult = {
   items: ItemDto[];

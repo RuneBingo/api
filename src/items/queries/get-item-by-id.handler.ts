@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { GetItemByIdResult, GetItemByIdQuery } from './get-item-by-id.query';
-import { Item } from '../entities/item.entity';
 import { ItemDto } from '../dtos/item.dto';
+import { Item } from '../entities/item.entity';
 
 @QueryHandler(GetItemByIdQuery)
 export class GetItemByIdHandler {
