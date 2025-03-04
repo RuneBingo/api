@@ -31,6 +31,13 @@ flowchart TB;
 
 ## Project setup
 
+> [!IMPORTANT]
+> For better OS support, this repository uses LF line endings (Unix-style). If you are running on Windows, please run the following command to ensure that git checks out files with the correct line endings:
+>
+> ```bash
+> git config --global core.autocrlf true
+> ```
+
 Install dependencies
 
 ```bash
