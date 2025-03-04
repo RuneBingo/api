@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
+import { EmailerService } from '@/emailer/emailer.service';
+import { VerificationEmail } from '@/emailer/templates/verification-email';
 import { CreateSessionForUserCommand } from '@/session/commands/create-session-for-user.command';
 import { SignOutSessionByUuidCommand } from '@/session/commands/sign-out-session-by-uuid.command';
 import type { SessionMethod } from '@/session/session.entity';
@@ -23,6 +25,7 @@ export class AuthController {
     private readonly configService: ConfigService,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly emailerService: EmailerService,
   ) {}
 
   @Post('sign-out')
@@ -46,6 +49,8 @@ export class AuthController {
   @HttpCode(201)
   async signInWithEmail(@Body() body: SignInWithEmailDto) {
     const { code } = await this.commandBus.execute(new SignInWithEmailCommand(body.email));
+
+    await this.emailerService.sendEmail(new VerificationEmail(body.email, { code: code }));
 
     if (this.configService.get('NODE_ENV') === 'development') {
       this.logger.log(`Generated code ${code} for email ${body.email}`);

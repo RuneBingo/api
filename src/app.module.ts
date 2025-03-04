@@ -6,6 +6,8 @@ import { configModule } from './config';
 import { cqrsModule } from './cqrs';
 import { dbModule } from './db';
 import { ItemsModule } from './items/items.module';
+import { EmailerModule } from './emailer/emailer.module';
+import { EmailerService } from './emailer/emailer.service';
 import { RedisModule } from './redis/redis.module';
 import { SessionModule } from './session/session.module';
 import { UserModule } from './user/user.module';
@@ -21,6 +23,8 @@ import { UserModule } from './user/user.module';
     RedisModule,
     ActivityModule,
     ItemsModule,
+    EmailerModule,
   ],
+  providers: [EmailerService],
 })
 export class AppModule {}
