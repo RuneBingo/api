@@ -6,5 +6,4 @@ export abstract class EmailTemplate<T = object> {
 
   public abstract subject: string;
   public abstract template: string;
-
 }
