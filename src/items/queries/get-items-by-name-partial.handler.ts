@@ -1,8 +1,9 @@
 import { QueryHandler } from '@nestjs/cqrs';
-import { GetItemsByNamePartialQuery, GetItemsByNamePartialResult } from './get-items-by-name-partial.query';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Item } from '../entities/item.entity';
 import { ILike, Repository } from 'typeorm';
+
+import { GetItemsByNamePartialQuery, GetItemsByNamePartialResult } from './get-items-by-name-partial.query';
+import { Item } from '../entities/item.entity';
 
 @QueryHandler(GetItemsByNamePartialQuery)
 export class GetItemsByNamePartialHandler {

@@ -1,15 +1,13 @@
-import { Query } from "@nestjs/cqrs";
-import { Item } from "../entities/item.entity"
+import { Query } from '@nestjs/cqrs';
+
+import { type Item } from '../entities/item.entity';
 
 export type GetItemsByNamePartialResult = {
-    items: Item[];
-}
+  items: Item[];
+};
 
 export class GetItemsByNamePartialQuery extends Query<GetItemsByNamePartialResult> {
-    constructor (
-        public readonly searchTerm: string,
-    ) {
-        super();
-    }
+  constructor(public readonly searchTerm: string) {
+    super();
+  }
 }
-
