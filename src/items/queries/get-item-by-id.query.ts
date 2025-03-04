@@ -1,9 +1,9 @@
 import { Query } from '@nestjs/cqrs';
 
-import { type Item } from '../entities/item.entity';
+import { ItemDto } from '../dtos/item.dto';
 
 export type GetItemByIdResult = {
-  item: Item | null;
+  item: ItemDto | null;
 };
 
 export class GetItemByIdQuery extends Query<GetItemByIdResult> {

@@ -4,6 +4,7 @@ import { ILike, Repository } from 'typeorm';
 
 import { GetItemsByNamePartialQuery, GetItemsByNamePartialResult } from './get-items-by-name-partial.query';
 import { Item } from '../entities/item.entity';
+import { ItemDto } from '../dtos/item.dto';
 
 @QueryHandler(GetItemsByNamePartialQuery)
 export class GetItemsByNamePartialHandler {
@@ -21,6 +22,8 @@ export class GetItemsByNamePartialHandler {
       },
     });
 
-    return { items };
+    const itemDtos: ItemDto[] = items.map(item => new ItemDto(item));
+
+    return { items: itemDtos };
   }
 }

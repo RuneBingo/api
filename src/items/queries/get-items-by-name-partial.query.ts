@@ -1,9 +1,8 @@
 import { Query } from '@nestjs/cqrs';
-
-import { type Item } from '../entities/item.entity';
+import { ItemDto } from '../dtos/item.dto';
 
 export type GetItemsByNamePartialResult = {
-  items: Item[];
+  items: ItemDto[];
 };
 
 export class GetItemsByNamePartialQuery extends Query<GetItemsByNamePartialResult> {

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { GetItemByIdResult, GetItemByIdQuery } from './get-item-by-id.query';
 import { Item } from '../entities/item.entity';
+import { ItemDto } from '../dtos/item.dto';
 
 @QueryHandler(GetItemByIdQuery)
 export class GetItemByIdHandler {
@@ -17,6 +18,10 @@ export class GetItemByIdHandler {
 
     const item: Item | null = await this.itemRepository.findOneBy({ id: id });
 
-    return { item };
+    if (!item) {
+      return { item };
+    }
+
+    return { item: new ItemDto(item) };
   }
 }
