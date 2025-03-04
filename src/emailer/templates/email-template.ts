@@ -1,21 +1,11 @@
-export abstract class EmailTemplate {
+export abstract class EmailTemplate<T = object> {
   constructor(
-    protected recipient: string,
-    protected template: string,
+    public readonly to: string,
+    public readonly context: T,
   ) {}
 
-  abstract getSubject(): string;
-  abstract getContext(): object;
+  public abstract subject: string;
+  public abstract template: string;
 
-  getRecipient(): string {
-    return this.recipient;
-  }
-
-  getTemplate(): string {
-    return this.template;
-  }
-
-  getFrom(): string {
-    return process.env.EMAIL_FROM || 'No Reply <default-email@gmail.com>';
-  }
+  public from: string = process.env.EMAIL_FROM || 'No Reply <default-email@gmail.com';
 }
