@@ -14,11 +14,10 @@ export class EmailerService {
   ) {}
 
   async sendEmail(emailTemplate: EmailTemplate) {
-    const { to, from, subject, template, context } = emailTemplate;
+    const { to, subject, template, context } = emailTemplate;
     try {
       await this.mailerService.sendMail({
         to,
-        from,
         subject,
         template,
         context,
