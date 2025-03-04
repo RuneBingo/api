@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { configModule } from './config';
 import { cqrsModule } from './cqrs';
 import { dbModule } from './db';
+import { ItemsModule } from './items/items.module';
 import { EmailerModule } from './emailer/emailer.module';
 import { EmailerService } from './emailer/emailer.service';
 import { RedisModule } from './redis/redis.module';
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     RedisModule,
     ActivityModule,
+    ItemsModule,
     EmailerModule,
   ],
   providers: [EmailerService],
