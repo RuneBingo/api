@@ -2,13 +2,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { configDotenv } from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 
+import { Item } from '@/items/entities/item.entity';
+
 import { Activity } from '../activity/activity.entity';
 import { Session } from '../session/session.entity';
 import { User } from '../user/user.entity';
 
 configDotenv();
 
-export const entities = [Activity, Session, User];
+export const entities = [Activity, Session, User, Item];
 export const migrations = [__dirname + '/migrations/**/*.ts', __dirname + '/migrations/**/*.js'];
 export const subscribers = [__dirname + '/subscribers/**/*.ts', __dirname + '/subscribers/**/*.js'];
 
