@@ -1,13 +1,11 @@
 <html>
   <head>
-
   </head>
-
   <body>
-    <div class='container'>
-      <h2>Your runebingo verification code</h2>
-      <p>Code: {{code}}</p>
-      <p>Enter this code to login.</p>
+    <div class="container">
+      <h2>{{ t "email.verificationEmail.subject" }}</h2>
+      <p>{{ t "email.verificationEmail.body" }} <pre>{{code}}</pre></p>
+      <p>{{ t "email.verificationEmail.cta" }}</p>
     </div>
   </body>
 </html>

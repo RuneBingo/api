@@ -2,5 +2,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
+  "files.associations": {
+    "*.hbs": "html"
+  },
   "files.eol": "auto"
 }

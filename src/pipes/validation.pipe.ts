@@ -1,3 +1,3 @@
 import { ValidationPipe } from '@nestjs/common';
 
-export default new ValidationPipe();
+export const validationPipe = new ValidationPipe();
