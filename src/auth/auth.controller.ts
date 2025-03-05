@@ -2,7 +2,7 @@ import { Body, Controller, HttpCode, Logger, Post, Request, UnauthorizedExceptio
 import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { I18n, I18nContext, I18nLang, I18nService } from 'nestjs-i18n';
+import { I18n, I18nLang, I18nService } from 'nestjs-i18n';
 
 import { EmailerService } from '@/emailer/emailer.service';
 import { VerificationEmail } from '@/emailer/templates/verification-email';
@@ -54,7 +54,7 @@ export class AuthController {
 
     const { code } = await this.commandBus.execute(new SignInWithEmailCommand(email));
     if (this.configService.get('NODE_ENV') === 'development') {
-      this.logger.log(`Generated code ${code} for email ${body.email}.`);
+      this.logger.log(`Generated code ${code} for email ${email}.`);
     }
 
     const user = await this.queryBus.execute(new FindUserByEmailQuery({ email }));
