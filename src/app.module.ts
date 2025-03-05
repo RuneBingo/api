@@ -8,6 +8,7 @@ import { cqrsModule } from './cqrs';
 import { dbModule } from './db';
 import { EmailerModule } from './emailer/emailer.module';
 import { EmailerService } from './emailer/emailer.service';
+import { i18nModule } from './i18n';
 import { bullModule } from './jobs/bull';
 import { JobsModule } from './jobs/jobs.module';
 import { RedisModule } from './redis/redis.module';
@@ -18,8 +19,10 @@ import { UserModule } from './user/user.module';
   imports: [
     configModule,
     bullModule,
-    dbModule,
     cqrsModule,
+    dbModule,
+    i18nModule,
+    RedisModule,
     SessionModule,
     UserModule,
     AuthModule,

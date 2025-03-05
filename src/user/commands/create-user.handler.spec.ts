@@ -45,6 +45,7 @@ describe('CreateUserHandler', () => {
     const command = new CreateUserCommand({
       email: 'test@example.com',
       emailVerified: true,
+      language: 'en',
       requester: 'self',
     });
 
@@ -79,6 +80,7 @@ describe('CreateUserHandler', () => {
     const command = new CreateUserCommand({
       email: 'test@example.com',
       emailVerified: true,
+      language: 'en',
       requester: 'self',
     });
 
@@ -106,6 +108,7 @@ describe('CreateUserHandler', () => {
     const command = new CreateUserCommand({
       email: 'other@example.com',
       emailVerified: false,
+      language: 'en',
       requester,
     });
 

@@ -12,6 +12,7 @@ import type { User } from '@/user/user.entity';
 declare global {
   interface Session extends ExpressSession {
     uuid?: string;
+    language?: string;
   }
 
   interface Request extends ExpressRequest {

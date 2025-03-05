@@ -9,9 +9,9 @@ export type JobQueue = (typeof JOB_QUEUES)[number];
 
 export const CRON_JOBS = [
   // Schedule cron jobs here
-  {
-    job: 'hello-world',
-    params: { name: 'Developer console' },
-    repeat: { pattern: '*/5 * * * * *' },
-  },
+  // {
+  //   job: 'hello-world',
+  //   params: { name: 'Developer console' },
+  //   repeat: { pattern: '*/5 * * * * *' },
+  // },
 ] as const satisfies { job: JobQueue; params: object; repeat: RepeatOptions }[];
