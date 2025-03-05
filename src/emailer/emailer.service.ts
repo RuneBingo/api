@@ -33,7 +33,7 @@ export class EmailerService {
       });
 
       if (this.configService.get('NODE_ENV') === 'development') {
-        this.logger.log(`Sent ${subject} email to ${to} in ${lang}.`);
+        this.logger.log(`Sent ${subject} email to ${to}`);
       }
     } catch (error) {
       this.logger.log('Error sending email: ', error);
