@@ -7,6 +7,7 @@ import { cqrsModule } from './cqrs';
 import { dbModule } from './db';
 import { EmailerModule } from './emailer/emailer.module';
 import { EmailerService } from './emailer/emailer.service';
+import { i18nModule } from './i18n';
 import { RedisModule } from './redis/redis.module';
 import { SessionModule } from './session/session.module';
 import { UserModule } from './user/user.module';
@@ -14,8 +15,10 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [
     configModule,
-    dbModule,
     cqrsModule,
+    dbModule,
+    i18nModule,
+    RedisModule,
     SessionModule,
     UserModule,
     AuthModule,

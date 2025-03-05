@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { I18nService } from 'nestjs-i18n';
 
 import { EmailerService } from './emailer.service';
 
@@ -12,8 +13,8 @@ import { EmailerService } from './emailer.service';
     ConfigModule.forRoot(),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      inject: [ConfigService, I18nService],
+      useFactory: (configService: ConfigService, i18n: I18nService) => ({
         transport: {
           service: 'gmail',
           auth: {
@@ -26,7 +27,7 @@ import { EmailerService } from './emailer.service';
         },
         template: {
           dir: path.join(__dirname, '/templates/html'),
-          adapter: new HandlebarsAdapter(),
+          adapter: new HandlebarsAdapter({ t: i18n.hbsHelper }),
           options: {
             strict: true,
           },

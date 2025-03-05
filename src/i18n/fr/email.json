@@ -1,0 +1,7 @@
+{
+  "verificationEmail": {
+    "subject": "Votre code de vérification RuneBingo",
+    "body": "Votre code de récupération est :",
+    "cta": "Veuillez entrer ce code pour vous connecter à l'application."
+  }
+}
