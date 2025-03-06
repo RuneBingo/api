@@ -25,12 +25,6 @@ async function bootstrap() {
   app.use(cookieParser(sessionSecret));
   app.set('trust proxy', isProduction);
   app.useGlobalPipes(validationPipe);
-  app.enableCors({
-    origin: 'http://localhost:5173',
-    methods: 'GET',
-    allowedHeaders: 'Content-Type',
-    credentials: true,
-  });
 
   setupOpenApi(app, 'swagger');
 
