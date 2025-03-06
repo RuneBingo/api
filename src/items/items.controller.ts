@@ -23,8 +23,8 @@ export class ItemsController {
   @ApiOperation({ summary: 'Returns an item with the id entered or 404' })
   @ApiResponse({ status: 200, description: 'Item was found' })
   @ApiNotFoundResponse({ description: 'Item was not found' })
-  async findOne(@Param('id') id: string): Promise<ItemDto | null> {
-    const { item } = await this.queryBus.execute(new FindItemByIdQuery(+id));
+  async findOne(@Param('id') id: number): Promise<ItemDto | null> {
+    const { item } = await this.queryBus.execute(new FindItemByIdQuery(id));
 
     if (!item) {
       throw new NotFoundException(`Item with id ${id} was not found`);
