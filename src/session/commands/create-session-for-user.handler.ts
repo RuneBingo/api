@@ -2,9 +2,11 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addWeeks } from 'date-fns';
+import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 import { UAParser } from 'ua-parser-js';
 
+import type { I18nTranslations } from '@/i18n/types';
 import { Session } from '@/session/session.entity';
 
 import { CreateSessionForUserCommand, CreateSessionForUserResult } from './create-session-for-user.command';
@@ -20,6 +22,7 @@ type IPInfoResponse = {
 export class CreateSessionForUserHandler {
   constructor(
     private readonly eventBus: EventBus,
+    private readonly i18nService: I18nService<I18nTranslations>,
     @InjectRepository(Session) private readonly sessionRepository: Repository<Session>,
   ) {}
 
@@ -27,7 +30,7 @@ export class CreateSessionForUserHandler {
     const { user, method, sessionId, ip, userAgent } = command;
 
     if (user.isDisabled) {
-      throw new UnauthorizedException('User is disabled');
+      throw new UnauthorizedException(this.i18nService.t('session.createSessionForUser.userDisabled'));
     }
 
     const { deviceType, os, browser } = this.getUserAgentInfo(userAgent);
@@ -67,15 +70,15 @@ export class CreateSessionForUserHandler {
     try {
       const response = await fetch(`https://ipinfo.io/${ip}/json`);
       if (!response.ok) {
-        return 'Unknown location';
+        return 'unknown';
       }
 
       const data = (await response.json()) as IPInfoResponse;
       const result = [data.city, data.region, data.country].filter(Boolean).join(', ');
 
-      return result || 'Unknown location';
+      return result || 'unknown';
     } catch {
-      return 'Unknown location';
+      return 'unknown';
     }
   }
 }

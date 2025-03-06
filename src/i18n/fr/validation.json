@@ -1,0 +1,4 @@
+{
+  "notEmpty": "{property} ne doit pas être vide",
+  "invalidEmail": "'{value}' n'est pas une adresse courriel valide"
+}

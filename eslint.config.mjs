@@ -8,7 +8,7 @@ import tsParser from '@typescript-eslint/parser';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'src/db/migrations/**'],
+    ignores: ['eslint.config.mjs', 'src/db/migrations/**', 'src/i18n/types.ts'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

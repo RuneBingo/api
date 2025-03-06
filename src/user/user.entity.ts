@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Column, Entity, Generated, OneToMany } from 'typeorm';
 
 import { StrongEntityParanoid } from '@/db/base.entity';
@@ -25,8 +24,11 @@ export class User extends StrongEntityParanoid {
   @Column({ default: false })
   emailVerified: boolean;
 
-  @Column({ nullable: false, default: false })
+  @Column({ default: false })
   isSuperAdmin: boolean;
+
+  @Column({ default: 'en' })
+  language: string;
 
   @OneToMany(() => Session, (session: Session) => session.user)
   sessions: Promise<Session[]>;
@@ -37,45 +39,5 @@ export class User extends StrongEntityParanoid {
 
   static normalizeEmail(email: string) {
     return email.trim().toLowerCase();
-  }
-
-  static isValidEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  changeEmail(email: string) {
-    const emailNormalized = User.normalizeEmail(email);
-
-    if (!User.isValidEmail(emailNormalized)) {
-      throw new BadRequestException('Invalid email');
-    }
-
-    this.email = email;
-    this.emailNormalized = emailNormalized;
-    this.emailVerified = false;
-  }
-
-  disable() {
-    if (this.disabledAt) {
-      throw new BadRequestException('User is already disabled');
-    }
-
-    this.disabledAt = new Date();
-  }
-
-  enable() {
-    if (!this.disabledAt) {
-      throw new BadRequestException('User is not disabled');
-    }
-
-    this.disabledAt = null;
-  }
-
-  verifyEmail() {
-    if (this.emailVerified) {
-      throw new BadRequestException('Email is already verified');
-    }
-
-    this.emailVerified = true;
   }
 }

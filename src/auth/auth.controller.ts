@@ -2,9 +2,11 @@ import { Body, Controller, HttpCode, Logger, Post, Request, UnauthorizedExceptio
 import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { I18n, I18nLang, I18nService } from 'nestjs-i18n';
 
 import { EmailerService } from '@/emailer/emailer.service';
 import { VerificationEmail } from '@/emailer/templates/verification-email';
+import type { I18nTranslations } from '@/i18n/types';
 import { CreateSessionForUserCommand } from '@/session/commands/create-session-for-user.command';
 import { SignOutSessionByUuidCommand } from '@/session/commands/sign-out-session-by-uuid.command';
 import type { SessionMethod } from '@/session/session.entity';
@@ -47,41 +49,50 @@ export class AuthController {
   @ApiOperation({ summary: 'Request authentication code via email' })
   @ApiResponse({ status: 201, description: 'An email with an authentication code has been sent.' })
   @HttpCode(201)
-  async signInWithEmail(@Body() body: SignInWithEmailDto) {
-    const { code } = await this.commandBus.execute(new SignInWithEmailCommand(body.email));
+  async signInWithEmail(@Body() body: SignInWithEmailDto, @I18nLang() lang: string) {
+    const { email } = body;
 
-    await this.emailerService.sendEmail(new VerificationEmail(body.email, { code: code }));
-
+    const { code } = await this.commandBus.execute(new SignInWithEmailCommand(email));
     if (this.configService.get('NODE_ENV') === 'development') {
-      this.logger.log(`Generated code ${code} for email ${body.email}`);
+      this.logger.log(`Generated code ${code} for email ${email}.`);
     }
+
+    const user = await this.queryBus.execute(new FindUserByEmailQuery({ email }));
+    void this.emailerService.sendEmail(new VerificationEmail(email, user?.language ?? lang, { code: code }));
   }
 
   @Post('email/verify-code')
   @ApiOperation({ summary: 'Verify email authentication code' })
   @ApiResponse({ status: 201, description: 'Signed in successfully.' })
   @ApiUnauthorizedResponse({ description: 'The code is invalid or has expired.' })
-  async verifyEmailCode(@Body() body: VerifyEmailCodeDto, @Request() req: Request) {
+  async verifyEmailCode(
+    @Body() body: VerifyEmailCodeDto,
+    @I18n() i18n: I18nService<I18nTranslations>,
+    @I18nLang() language: string,
+    @Request() req: Request,
+  ) {
     const { email, code } = body;
 
     const { valid } = await this.queryBus.execute(new VerifyEmailCodeQuery(email, code));
     if (!valid) {
-      throw new UnauthorizedException('The code is invalid or has expired.');
+      throw new UnauthorizedException(i18n.t('auth.verifyCode.invalidOrExpired'));
     }
 
     let user = await this.queryBus.execute(new FindUserByEmailQuery({ email, withDeleted: true }));
     if (!user) {
-      user = await this.commandBus.execute(new CreateUserCommand({ email, emailVerified: true, requester: 'self' }));
+      user = await this.commandBus.execute(
+        new CreateUserCommand({ email, emailVerified: true, language, requester: 'self' }),
+      );
     }
 
     if (user.isDeleted) {
-      throw new UnauthorizedException('Your account has been deleted, please contact the support to recover it.');
+      throw new UnauthorizedException(i18n.t('auth.verifyCode.accountDeleted'));
     }
 
     await this.createSessionForUser(req, user, 'email');
   }
 
-  private async createSessionForUser(@Request() req: Request, user: User, method: SessionMethod) {
+  private async createSessionForUser(req: Request, user: User, method: SessionMethod) {
     const { headers, ip, session } = req;
 
     if (session.uuid) {
@@ -99,6 +110,7 @@ export class AuthController {
     );
 
     session.uuid = sessionEntity.uuid;
+    session.language = user.language;
     session.save();
   }
 }
