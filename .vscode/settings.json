@@ -3,7 +3,8 @@
     "source.fixAll": "explicit"
   },
   "files.associations": {
-    "*.hbs": "html"
+    "*.hbs": "html",
+    ".env*": "ini"
   },
   "files.eol": "auto"
 }
