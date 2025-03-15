@@ -14,6 +14,7 @@ import { CreateUserCommand } from '@/user/commands/create-user.command';
 import { FindUserByEmailQuery } from '@/user/queries/find-user-by-email.query';
 import type { User } from '@/user/user.entity';
 
+import { type AppConfig } from '../config';
 import { SignInWithEmailCommand } from './commands/sign-in-with-email.command';
 import { SignInWithEmailDto } from './dto/sign-in-with-email.dto';
 import { VerifyEmailCodeDto } from './dto/verify-email-code.dto';
@@ -24,7 +25,7 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
   constructor(
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService<AppConfig>,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly emailerService: EmailerService,
@@ -50,10 +51,11 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'An email with an authentication code has been sent.' })
   @HttpCode(201)
   async signInWithEmail(@Body() body: SignInWithEmailDto, @I18nLang() lang: string) {
+    const env = this.configService.get('NODE_ENV', { infer: true });
     const { email } = body;
 
     const { code } = await this.commandBus.execute(new SignInWithEmailCommand(email));
-    if (this.configService.get('NODE_ENV') === 'development') {
+    if (env === 'development') {
       this.logger.log(`Generated code ${code} for email ${email}.`);
     }
 

@@ -5,6 +5,7 @@ import { I18nService } from 'nestjs-i18n';
 
 import type { I18nTranslations } from '@/i18n/types';
 
+import { type AppConfig } from '../config';
 import { EmailTemplate } from './templates/email-template';
 
 @Injectable()
@@ -13,11 +14,12 @@ export class EmailerService {
 
   constructor(
     private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService<AppConfig>,
     private readonly i18nService: I18nService<I18nTranslations>,
   ) {}
 
   async sendEmail(emailTemplate: EmailTemplate) {
+    const env = this.configService.get('NODE_ENV', { infer: true });
     const { to, lang, subject: subjectKey, template, context } = emailTemplate;
 
     context['i18nLang'] = emailTemplate.lang;
@@ -32,7 +34,7 @@ export class EmailerService {
         context,
       });
 
-      if (this.configService.get('NODE_ENV') === 'development') {
+      if (env === 'development') {
         this.logger.log(`Sent ${subject} email to ${to}`);
       }
     } catch (error) {

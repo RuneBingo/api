@@ -16,16 +16,17 @@ import { validationPipe } from '@/pipes/validation.pipe';
 import { RedisService } from '@/redis/redis.service';
 
 import { AppModule } from './app.module';
+import { type AppConfig } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: new ConsoleLogger({ colors: true }),
   });
 
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('BACKEND_PORT', 5000);
-  const env = configService.get<string>('NODE_ENV');
-  const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
+  const configService = app.get(ConfigService<AppConfig>);
+  const port = configService.getOrThrow('server.port', { infer: true });
+  const env = configService.get('NODE_ENV', { infer: true });
+  const sessionSecret = configService.getOrThrow('session.secret', { infer: true });
   const isProduction = env !== 'development' && env !== 'test';
 
   app.use(cookieParser(sessionSecret));
@@ -40,10 +41,10 @@ async function bootstrap() {
 }
 
 function setupSession(app: NestExpressApplication) {
-  const configService = app.get(ConfigService);
-  const env = configService.get<string>('NODE_ENV');
+  const configService = app.get(ConfigService<AppConfig>);
+  const env = configService.get('NODE_ENV', { infer: true });
   const isProduction = env !== 'development' && env !== 'test';
-  const sessionSecret = configService.getOrThrow<string>('SESSION_SECRET');
+  const sessionSecret = configService.getOrThrow('session.secret', { infer: true });
 
   const redisService = app.get(RedisService);
 
