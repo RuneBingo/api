@@ -1,0 +1,9 @@
+{
+  "createUser": {
+    "emailAlreadyExists": "The email address is already taken.",
+    "usernameAlreadyExists": "The username is already taken."
+  },
+  "searchUsers": {
+    "invalidStatus": "Invalid status. Allowed values are 'active', 'disabled' or null."
+  }
+}

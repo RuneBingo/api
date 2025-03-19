@@ -6,7 +6,15 @@ import { Path } from "nestjs-i18n";
 /* prettier-ignore */
 export type I18nTranslations = {
     "auth": {
-        "verifyCode": {
+        "signInWithEmail": {
+            "userNotFound": string;
+            "userDisabled": string;
+        };
+        "signUpWithEmail": {
+            "emailAlreadyExists": string;
+            "usernameAlreadyExists": string;
+        };
+        "verifyAuthCode": {
             "invalidOrExpired": string;
             "accountDeleted": string;
         };
@@ -23,9 +31,22 @@ export type I18nTranslations = {
             "userDisabled": string;
         };
     };
+    "user": {
+        "createUser": {
+            "emailAlreadyExists": string;
+            "usernameAlreadyExists": string;
+        };
+        "searchUsers": {
+            "invalidStatus": string;
+        };
+    };
     "validation": {
         "notEmpty": string;
         "invalidEmail": string;
+        "username": {
+            "noSpecialCharacters": string;
+            "invalidLength": string;
+        };
     };
 };
 /* prettier-ignore */

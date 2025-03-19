@@ -9,7 +9,7 @@ export class UserCreatedHandler {
   constructor(private readonly commandBus: CommandBus) {}
 
   async handle(event: UserCreatedEvent) {
-    const { userId, requesterId, email, emailVerified } = event;
+    const { userId, requesterId, ...parameters } = event;
 
     await this.commandBus.execute(
       new CreateActivityCommand({
@@ -17,7 +17,7 @@ export class UserCreatedHandler {
         requesterId,
         trackableId: userId,
         trackableType: 'User',
-        parameters: { email, emailVerified },
+        parameters,
       }),
     );
   }
