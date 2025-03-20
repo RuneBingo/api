@@ -3,6 +3,8 @@ import { configDotenv } from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
+import { Bingo } from '@/bingo/bingo.entity';
+
 import { Activity } from '../activity/activity.entity';
 import { dotenvPath } from '../config';
 import { Session } from '../session/session.entity';
@@ -10,7 +12,7 @@ import { User } from '../user/user.entity';
 
 configDotenv({ path: dotenvPath });
 
-export const entities = [Activity, Session, User];
+export const entities = [Activity, Session, User, Bingo];
 export const migrations = [__dirname + '/migrations/**/*.ts', __dirname + '/migrations/**/*.js'];
 export const subscribers = [__dirname + '/subscribers/**/*.ts', __dirname + '/subscribers/**/*.js'];
 
