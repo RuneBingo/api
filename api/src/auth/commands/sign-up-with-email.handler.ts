@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 import { ConflictException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -35,7 +37,7 @@ export class SignUpWithEmailHandler {
       throw new ConflictException(this.i18nService.t('auth.signUpWithEmail.usernameAlreadyExists'));
     }
 
-    const code = Math.random().toString(36).substring(2, 8);
+    const code = randomBytes(3).toString('hex');
     const value: SignUpCodePayload = { action: 'sign-up', username, language };
 
     await this.redisService.set(`auth:${emailNormalized}:${code}`, JSON.stringify(value), (30).minutes);

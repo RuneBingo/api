@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,7 +34,7 @@ export class SignInWithEmailHandler {
       throw new ForbiddenException(this.i18nService.t('auth.signInWithEmail.userDisabled'));
     }
 
-    const code = Math.random().toString(36).substring(2, 8);
+    const code = randomBytes(3).toString('hex');
     const value: SignInCodePayload = { action: 'sign-in' };
 
     await this.redisService.set(`auth:${emailNormalized}:${code}`, JSON.stringify(value), (30).minutes);
