@@ -18,12 +18,23 @@ export type I18nTranslations = {
             "invalidOrExpired": string;
             "accountDeleted": string;
         };
+        "roles": {
+            "admin": string;
+            "moderator": string;
+            "user": string;
+        };
     };
     "email": {
         "verificationEmail": {
             "subject": string;
             "body": string;
             "cta": string;
+        };
+    };
+    "general": {
+        "language": {
+            "en": string;
+            "fr": string;
         };
     };
     "session": {
@@ -36,8 +47,40 @@ export type I18nTranslations = {
             "emailAlreadyExists": string;
             "usernameAlreadyExists": string;
         };
+        "findByUsername": {
+            "notFound": string;
+        };
         "searchUsers": {
             "invalidStatus": string;
+        };
+        "searchUserActivities": {
+            "userNotFound": string;
+        };
+        "updateUser": {
+            "userNotFound": string;
+            "usernameAlreadyExists": string;
+        };
+        "formatUserActivities": {
+            "userNotFound": string;
+        };
+        "activity": {
+            "created": {
+                "title": {
+                    "self": string;
+                    "other": string;
+                };
+            };
+            "updated": {
+                "title": {
+                    "self": string;
+                    "other": string;
+                };
+                "body": {
+                    "username": string;
+                    "language": string;
+                    "role": string;
+                };
+            };
         };
     };
     "validation": {

@@ -9,7 +9,7 @@ export class UserDto {
   @ApiProperty()
   usernameNormalized: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: String })
   gravatarHash: string | null;
 
   @ApiProperty()

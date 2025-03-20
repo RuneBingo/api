@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import type { PaginatedResult, PaginatedResultWithoutTotal } from '../paginated-query.utils';
 
 export class PaginatedDto<T extends object> {
-  @ApiProperty()
+  @ApiProperty({ type: [Object] })
   items: T[];
 
   @ApiProperty()
@@ -24,7 +24,7 @@ export class PaginatedDto<T extends object> {
 }
 
 export class PaginatedDtoWithoutTotal<T extends object> {
-  @ApiProperty()
+  @ApiProperty({ type: [Object] })
   items: T[];
 
   @ApiProperty()

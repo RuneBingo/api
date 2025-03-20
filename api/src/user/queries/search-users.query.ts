@@ -5,7 +5,7 @@ import { type PaginatedResultWithoutTotal, type PaginatedQueryParams } from '@/d
 import { type User } from '../user.entity';
 
 export type SearchUsersParams = PaginatedQueryParams<{
-  requester: User | null;
+  requester: User | undefined;
   search?: string;
   status?: 'active' | 'disabled' | null;
 }>;

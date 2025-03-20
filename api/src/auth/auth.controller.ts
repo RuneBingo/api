@@ -1,4 +1,14 @@
-import { BadRequestException, Body, Controller, HttpCode, Logger, Post, Request } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -22,6 +32,7 @@ import { SignInWithEmailDto } from './dto/sign-in-with-email.dto';
 import { SignUpWithEmailDto } from './dto/sign-up-with-email.dto';
 import { VerifyAuthCodeDto } from './dto/verify-auth-code.dto';
 import { VerifyAuthCodeQuery } from './queries/verify-auth-code.query';
+import { UserDto } from '../user/dto/user.dto';
 
 @Controller('v1/auth')
 export class AuthController {
@@ -34,10 +45,25 @@ export class AuthController {
     private readonly emailerService: EmailerService,
   ) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Get the current authenticated user' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The current authenticated user, or null if not authenticated.',
+    type: [UserDto],
+  })
+  me(@Request() req: Request) {
+    const user = req.userEntity;
+
+    if (!user) return null;
+
+    return new UserDto(user);
+  }
+
   @Post('sign-out')
   @ApiOperation({ summary: 'Sign out from current session' })
-  @ApiResponse({ status: 201, description: 'Signed out successfully.' })
-  @HttpCode(201)
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Signed out successfully.' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async signOut(@Request() req: Request) {
     const { uuid } = req.session;
     if (!uuid) return;
@@ -51,11 +77,11 @@ export class AuthController {
 
   @Post('sign-in')
   @ApiOperation({ summary: 'Request sign-in code via email' })
-  @ApiResponse({ status: 201, description: 'An email with an sign-in code has been sent.' })
-  @ApiResponse({ status: 400, description: 'The email address is invalid.' })
-  @ApiResponse({ status: 403, description: 'The user account is disabled.' })
-  @ApiResponse({ status: 404, description: 'The user account does not exist.' })
-  @HttpCode(201)
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'An email with an sign-in code has been sent.' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'The email address is invalid.' })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'The user account is disabled.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'The user account does not exist.' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async signInWithEmail(@Body() body: SignInWithEmailDto, @I18nLang() lang: string) {
     const env = this.configService.get('NODE_ENV', { infer: true });
     const { email } = body;
@@ -72,10 +98,10 @@ export class AuthController {
 
   @Post('sign-up')
   @ApiOperation({ summary: 'Request sign-up code via email' })
-  @ApiResponse({ status: 201, description: 'An email with an sign-up code has been sent.' })
-  @ApiResponse({ status: 400, description: 'The email address or username is invalid.' })
-  @ApiResponse({ status: 409, description: 'The email address or username is already in use.' })
-  @HttpCode(201)
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'An email with an sign-up code has been sent.' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'The email address or username is invalid.' })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'The email address or username is already in use.' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async signUpWithEmail(@Body() dto: SignUpWithEmailDto, @I18nLang() lang: string) {
     const env = this.configService.get('NODE_ENV', { infer: true });
     const { email, username } = dto;
@@ -92,11 +118,12 @@ export class AuthController {
   @Post('verify-code')
   @ApiOperation({ summary: 'Verify authentication code' })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.NO_CONTENT,
     description:
       'Verification successful. User has been created if it was a sign up. Session created if sign up or sign in.',
   })
   @ApiUnauthorizedResponse({ description: 'The code is invalid or has expired.' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async verifyCode(
     @Body() body: VerifyAuthCodeDto,
     @I18n() i18n: I18nService<I18nTranslations>,
