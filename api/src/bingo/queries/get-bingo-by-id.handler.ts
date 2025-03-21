@@ -18,14 +18,15 @@ export class GetBingoByIdHandler {
   ) { }
 
   async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
+
+    const whereCondition: any = {id: query.params.bingoId}
+
+    if (!query.params.requester) {
+      whereCondition.private = false;
+    }
+
     const bingo = await this.bingoRepository.findOne({
-      where: { id: query.bingoId },
-      relations: [
-        'createdBy',
-        'updatedBy',
-        'canceledBy',
-        'startedBy',
-        'endedBy']
+      where: whereCondition
     });
 
     if (!bingo) {

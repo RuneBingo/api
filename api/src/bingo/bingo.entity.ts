@@ -36,7 +36,7 @@ export class Bingo extends StrongEntity {
   @Column({type: 'timestamptz'})
   endDate: Date;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, lazy: true })
   @JoinColumn({ name: 'created_by' })
   createdBy: Promise<User>;
 

@@ -27,19 +27,18 @@ export class BingoDto {
   static async fromBingo(bingo: Bingo): Promise<BingoDto> {
     const dto = new BingoDto(bingo);
 
-    const creator = await bingo.createdBy;
-    dto.createdBy = creator? new UserDto(creator) : null;
+    const [createdBy, startedBy, endedBy, canceledBy, updatedBy] = await Promise.all([
+      bingo.createdBy,
+      bingo.startedBy,
+      bingo.endedBy,
+      bingo.canceledBy,
+      bingo.updatedBy
+    ]);
 
-    const startedBy = await bingo.startedBy;
+    dto.createdBy = createdBy ? new UserDto(createdBy) : null;
     dto.startedBy = startedBy ? new UserDto(startedBy) : null;
-
-    const endedBy = await bingo.endedBy;
     dto.endedBy = endedBy ? new UserDto(endedBy) : null;
-
-    const canceledBy = await bingo.canceledBy;
     dto.canceledBy = canceledBy ? new UserDto(canceledBy) : null;
-
-    const updatedBy = await bingo.updatedBy;
     dto.updatedBy = updatedBy ? new UserDto(updatedBy) : null;
 
     return dto;

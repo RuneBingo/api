@@ -15,8 +15,16 @@ export class SearchBingosHandler {
   ) {}
 
   async execute(query: SearchBingosQuery): Promise<SearchBingosResult> {
-    const { ...pagination } = query.params;
-    const bingos = this.bingoRepository.createQueryBuilder('bingo');
+    const { requester, ...pagination } = query.params;
+    
+    const bingos = await this.bingoRepository
+    .createQueryBuilder('bingo')
+    .leftJoinAndSelect('bingo.createdBy', 'createdBy');
+
+    if (!requester) {
+      bingos.andWhere('bingo.private = false');
+    }
+
     return resolvePaginatedQueryWithoutTotal(bingos, pagination);
   }
 }
