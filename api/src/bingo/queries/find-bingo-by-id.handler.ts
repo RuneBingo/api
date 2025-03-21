@@ -18,7 +18,7 @@ export class FindBingoByIdHandler {
   ) {}
 
   async execute(query: FindBingoByIdQuery): Promise<FindBingoByIdResult> {
-    const bingo = await this.bingoRepository.findOneBy({ id: query.bingoId });
+    const bingo = await this.bingoRepository.findOne({ where: { id: query.bingoId }, relations: ['user'] });
 
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.findById.notFound'));

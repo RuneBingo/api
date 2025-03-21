@@ -22,6 +22,7 @@ export class BingoDto {
     this.cancelledAt = bingo.cancelledAt;
     this.cancelledBy = bingo.cancelledBy;
   }
+
   @ApiProperty()
   createBy: UserDto;
 
@@ -56,17 +57,17 @@ export class BingoDto {
   startedAt: Date;
 
   @ApiProperty()
-  startedBy: number;
+  startedBy: number | null;
 
   @ApiProperty()
   endedAt: Date;
 
   @ApiProperty()
-  endedBy: number;
+  endedBy: number | null;
 
   @ApiProperty()
   cancelledAt: Date;
 
   @ApiProperty()
-  cancelledBy: number;
+  cancelledBy: number | null;
 }
