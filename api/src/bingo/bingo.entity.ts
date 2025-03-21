@@ -1,4 +1,4 @@
-import { Column, Entity, Generated, OneToMany } from 'typeorm';
+import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { StrongEntity } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
@@ -39,21 +39,26 @@ export class Bingo extends StrongEntity {
   @Column({ nullable: true })
   startedAt: Date;
 
-  @Column({ nullable: true })
-  @OneToMany(() => User, (user: User) => user.id)
-  startedBy: number;
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({name: 'started_by'})
+  startedBy: Promise<User>;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({name: 'creator_id'})
+  creator: Promise<User>;
 
   @Column({ nullable: true })
   endedAt: Date;
 
-  @Column({ nullable: true })
-  @OneToMany(() => User, (user: User) => user.id)
-  endedBy: number;
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({name: 'ended_by'})
+  endedBy: Promise<User>;
 
   @Column({ nullable: true })
   cancelledAt: Date;
 
-  @Column({ nullable: true })
-  @OneToMany(() => User, (user: User) => user.id)
-  cancelledBy: number;
+  
+  @ManyToOne(() => User)
+  @JoinColumn({name: 'cancelled_by'})
+  cancelledBy: Promise<User>;
 }
