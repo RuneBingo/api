@@ -8,7 +8,7 @@ import { CreateBingoCommand } from './commands/create-bingo.command';
 import { BingoDto } from './dto/bingo.dto';
 import { CreateBingoDto } from './dto/create-bingo.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
-import { GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
+import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
 
 @Controller('v1/bingo')
@@ -31,13 +31,17 @@ export class BingoController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get bingos with limit and offset parameters' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Here are the bingos' })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
-  async getBingos(@Query('limit') limit?: string, @Query('offset') offset?: string): Promise<PaginatedBingosDto> {
+  async getBingos(
+    @Req() req: Request,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ): Promise<PaginatedBingosDto> {
     const params = {
+      requester: req.userEntity,
       limit: limit ? parseInt(limit) : undefined,
       offset: offset ? parseInt(offset) : undefined,
     } satisfies SearchBingosParams;
@@ -53,9 +57,9 @@ export class BingoController {
   @ApiOperation({ summary: 'Find a bingo by its id' })
   @ApiResponse({ status: HttpStatus.OK, description: 'The bingo has been found', type: BingoDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'The bingo does not exist' })
-  @UseGuards(AuthGuard)
-  async findById(@Param('id') id: number): Promise<BingoDto> {
-    const bingo = await this.queryBus.execute(new GetBingoByIdQuery(id));
+  async findById(@Param('id') id: number, @Req() req: Request): Promise<BingoDto> {
+    const params: GetBingoByIdParams = { bingoId: id, requester: req.userEntity! };
+    const bingo = await this.queryBus.execute(new GetBingoByIdQuery(params));
     return await BingoDto.fromBingo(bingo);
   }
 }
