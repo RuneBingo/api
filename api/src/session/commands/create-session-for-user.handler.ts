@@ -37,7 +37,7 @@ export class CreateSessionForUserHandler {
     const location = await this.getLocationFromIP(ip);
 
     let session = new Session();
-    session.createdBy = user.id;
+    session.createdById = user.id;
     session.userId = user.id;
     session.sessionID = sessionId;
     session.method = method;

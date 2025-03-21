@@ -14,7 +14,7 @@ export class CreateBingoHandler {
 
   async execute(command: CreateBingoCommand): Promise<CreateBingoResult> {
     const bingo: Bingo = this.bingoRepository.create(command.createBingoDto);
-    bingo.createdBy = command.requester.id;
+    bingo.createdById = command.requester.id;
     await this.bingoRepository.save(bingo);
 
     return bingo;

@@ -24,7 +24,7 @@ export class SignOutSessionByUuidHandler {
     const requesterUser = requester === 'self' ? await session.user : requester;
 
     session.signOut();
-    session.updatedBy = requesterUser.id;
+    session.updatedById = requesterUser.id;
 
     session = await this.sessionRepository.save(session);
 

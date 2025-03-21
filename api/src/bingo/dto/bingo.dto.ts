@@ -20,14 +20,14 @@ export class BingoDto {
     this.startedBy = null;
     this.endedAt = bingo.endedAt;
     this.endedBy = null;
-    this.cancelledAt = bingo.cancelledAt;
-    this.cancelledBy = null;
+    this.canceledAt = bingo.canceledAt;
+    this.canceledBy = null;
   }
 
   static async fromBingo(bingo: Bingo): Promise<BingoDto> {
     const dto = new BingoDto(bingo);
 
-    const creator = await bingo.creator;
+    const creator = await bingo.createdBy;
     dto.createdBy = creator? new UserDto(creator) : null;
 
     const startedBy = await bingo.startedBy;
@@ -36,10 +36,10 @@ export class BingoDto {
     const endedBy = await bingo.endedBy;
     dto.endedBy = endedBy ? new UserDto(endedBy) : null;
 
-    const cancelledBy = await bingo.cancelledBy;
-    dto.cancelledBy = cancelledBy ? new UserDto(cancelledBy) : null;
+    const canceledBy = await bingo.canceledBy;
+    dto.canceledBy = canceledBy ? new UserDto(canceledBy) : null;
 
-    const updatedBy = await bingo.updater;
+    const updatedBy = await bingo.updatedBy;
     dto.updatedBy = updatedBy ? new UserDto(updatedBy) : null;
 
     return dto;
@@ -91,8 +91,8 @@ export class BingoDto {
   endedBy: UserDto | null;
 
   @ApiProperty()
-  cancelledAt: Date;
+  canceledAt: Date;
 
   @ApiProperty()
-  cancelledBy: UserDto | null;
+  canceledBy: UserDto | null;
 }
