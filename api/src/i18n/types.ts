@@ -24,6 +24,11 @@ export type I18nTranslations = {
             "user": string;
         };
     };
+    "bingo": {
+        "findById": {
+            "notFound": string;
+        };
+    };
     "email": {
         "verificationEmail": {
             "subject": string;
