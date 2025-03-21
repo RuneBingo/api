@@ -44,8 +44,12 @@ export class Bingo extends StrongEntity {
   startedBy: Promise<User>;
 
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({name: 'creator_id'})
+  @JoinColumn({name: 'created_by'})
   creator: Promise<User>;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({name: 'updated_by'})
+  updater: Promise<User>;
 
   @Column({ nullable: true })
   endedAt: Date;
@@ -57,7 +61,6 @@ export class Bingo extends StrongEntity {
   @Column({ nullable: true })
   cancelledAt: Date;
 
-  
   @ManyToOne(() => User)
   @JoinColumn({name: 'cancelled_by'})
   cancelledBy: Promise<User>;

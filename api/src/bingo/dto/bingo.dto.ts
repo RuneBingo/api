@@ -15,16 +15,41 @@ export class BingoDto {
     this.fullLineValue = bingo.fullLineValue;
     this.startDate = bingo.startDate;
     this.endDate = bingo.endDate;
+    this.createdBy = null;
     this.startedAt = bingo.startedAt;
-    this.startedBy = bingo.startedBy;
+    this.startedBy = null;
     this.endedAt = bingo.endedAt;
-    this.endedBy = bingo.endedBy;
+    this.endedBy = null;
     this.cancelledAt = bingo.cancelledAt;
-    this.cancelledBy = bingo.cancelledBy;
+    this.cancelledBy = null;
+  }
+
+  static async fromBingo(bingo: Bingo): Promise<BingoDto> {
+    const dto = new BingoDto(bingo);
+
+    const creator = await bingo.creator;
+    dto.createdBy = creator? new UserDto(creator) : null;
+
+    const startedBy = await bingo.startedBy;
+    dto.startedBy = startedBy ? new UserDto(startedBy) : null;
+
+    const endedBy = await bingo.endedBy;
+    dto.endedBy = endedBy ? new UserDto(endedBy) : null;
+
+    const cancelledBy = await bingo.cancelledBy;
+    dto.cancelledBy = cancelledBy ? new UserDto(cancelledBy) : null;
+
+    const updatedBy = await bingo.updater;
+    dto.updatedBy = updatedBy ? new UserDto(updatedBy) : null;
+
+    return dto;
   }
 
   @ApiProperty()
-  createBy: UserDto;
+  createdBy: UserDto | null;
+
+  @ApiProperty()
+  updatedBy: UserDto | null;
 
   @ApiProperty()
   language: string;
@@ -57,17 +82,17 @@ export class BingoDto {
   startedAt: Date;
 
   @ApiProperty()
-  startedBy: number | null;
+  startedBy: UserDto | null;
 
   @ApiProperty()
   endedAt: Date;
 
   @ApiProperty()
-  endedBy: number | null;
+  endedBy: UserDto | null;
 
   @ApiProperty()
   cancelledAt: Date;
 
   @ApiProperty()
-  cancelledBy: number | null;
+  cancelledBy: UserDto | null;
 }

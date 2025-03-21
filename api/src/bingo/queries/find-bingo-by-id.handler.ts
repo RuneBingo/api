@@ -15,10 +15,18 @@ export class FindBingoByIdHandler {
     private readonly i18nService: I18nService<I18nTranslations>,
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
-  ) {}
+  ) { }
 
   async execute(query: FindBingoByIdQuery): Promise<FindBingoByIdResult> {
-    const bingo = await this.bingoRepository.findOne({ where: { id: query.bingoId }, relations: ['user'] });
+    const bingo = await this.bingoRepository.findOne({
+      where: { id: query.bingoId },
+      relations: [
+        'creator',
+        'updater',
+        'cancelledBy',
+        'startedBy',
+        'endedBy']
+    });
 
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.findById.notFound'));

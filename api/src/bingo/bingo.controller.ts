@@ -56,6 +56,6 @@ export class BingoController {
   @UseGuards(AuthGuard)
   async findById(@Param('id') id: number): Promise<BingoDto> {
     const bingo = await this.queryBus.execute(new FindBingoByIdQuery(id));
-    return new BingoDto(bingo);
+    return await BingoDto.fromBingo(bingo);
   }
 }
