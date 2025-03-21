@@ -53,8 +53,8 @@ export abstract class StrongEntity {
    *
    * - If the entity was created by the system, this field is `null`.
    */
-  @Column({ type: 'int', nullable: true })
-  createdBy: number | null = null;
+  @Column({ name: 'created_by',type: 'int', nullable: true })
+  createdById: number | null = null;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
@@ -64,8 +64,8 @@ export abstract class StrongEntity {
    *
    * - If the entity was updated by the system, this field is `null`.
    */
-  @Column({ type: 'int', nullable: true })
-  updatedBy: number | null = null;
+  @Column({ name: 'updated_by' ,type: 'int', nullable: true })
+  updatedById: number | null = null;
 }
 
 /**

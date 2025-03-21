@@ -21,9 +21,9 @@ export class FindBingoByIdHandler {
     const bingo = await this.bingoRepository.findOne({
       where: { id: query.bingoId },
       relations: [
-        'creator',
-        'updater',
-        'cancelledBy',
+        'createdBy',
+        'updatedBy',
+        'canceledBy',
         'startedBy',
         'endedBy']
     });
