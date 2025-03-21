@@ -5,16 +5,16 @@ import { Repository } from 'typeorm';
 import { resolvePaginatedQueryWithoutTotal } from '@/db/paginated-query.utils';
 
 import { Bingo } from '../bingo.entity';
-import { GetBingosQuery, GetBingosResult } from './get-bingos.query';
+import { SearchBingosQuery, SearchBingosResult } from './search-bingos.query';
 
-@QueryHandler(GetBingosQuery)
-export class GetBingosHandler {
+@QueryHandler(SearchBingosQuery)
+export class SearchBingosHandler {
   constructor(
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
   ) {}
 
-  async execute(query: GetBingosQuery): Promise<GetBingosResult> {
+  async execute(query: SearchBingosQuery): Promise<SearchBingosResult> {
     const { ...pagination } = query.params;
     const bingos = this.bingoRepository.createQueryBuilder('bingo');
     return resolvePaginatedQueryWithoutTotal(bingos, pagination);
