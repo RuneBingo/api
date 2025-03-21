@@ -7,17 +7,17 @@ import { Repository } from 'typeorm';
 import { I18nTranslations } from '@/i18n/types';
 
 import { Bingo } from '../bingo.entity';
-import { FindBingoByIdQuery, FindBingoByIdResult } from './find-bingo-by-id.query';
+import { GetBingoByIdQuery, GetBingoByIdResult } from './get-bingo-by-id.query';
 
-@QueryHandler(FindBingoByIdQuery)
-export class FindBingoByIdHandler {
+@QueryHandler(GetBingoByIdQuery)
+export class GetBingoByIdHandler {
   constructor(
     private readonly i18nService: I18nService<I18nTranslations>,
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
   ) { }
 
-  async execute(query: FindBingoByIdQuery): Promise<FindBingoByIdResult> {
+  async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
     const bingo = await this.bingoRepository.findOne({
       where: { id: query.bingoId },
       relations: [

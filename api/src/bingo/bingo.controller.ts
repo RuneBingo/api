@@ -8,8 +8,8 @@ import { CreateBingoCommand } from './commands/create-bingo.command';
 import { BingoDto } from './dto/bingo.dto';
 import { CreateBingoDto } from './dto/create-bingo.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
-import { FindBingoByIdQuery } from './queries/find-bingo-by-id.query';
-import { GetBingosParams, GetBingosQuery } from './queries/get-bingos.query';
+import { GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
+import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -40,9 +40,9 @@ export class BingoController {
     const params = {
       limit: limit ? parseInt(limit) : undefined,
       offset: offset ? parseInt(offset) : undefined,
-    } satisfies GetBingosParams;
+    } satisfies SearchBingosParams;
 
-    const { items, ...pagination } = await this.queryBus.execute(new GetBingosQuery(params));
+    const { items, ...pagination } = await this.queryBus.execute(new SearchBingosQuery(params));
 
     const bingosDto = items.map((bingo) => new BingoDto(bingo));
 
@@ -55,7 +55,7 @@ export class BingoController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'The bingo does not exist' })
   @UseGuards(AuthGuard)
   async findById(@Param('id') id: number): Promise<BingoDto> {
-    const bingo = await this.queryBus.execute(new FindBingoByIdQuery(id));
+    const bingo = await this.queryBus.execute(new GetBingoByIdQuery(id));
     return await BingoDto.fromBingo(bingo);
   }
 }
