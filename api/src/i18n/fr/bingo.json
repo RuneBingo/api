@@ -1,0 +1,5 @@
+{
+    "findById": {
+        "notFound": "Le bingo n'existe pas."
+    }
+}

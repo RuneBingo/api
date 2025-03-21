@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { UserDto } from '@/user/dto/user.dto';
+
 import { Bingo } from '../bingo.entity';
 
 export class BingoDto {
@@ -20,6 +22,9 @@ export class BingoDto {
     this.cancelledAt = bingo.cancelledAt;
     this.cancelledBy = bingo.cancelledBy;
   }
+  @ApiProperty()
+  createBy: UserDto;
+
   @ApiProperty()
   language: string;
 
