@@ -48,7 +48,7 @@ export class BingoController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get bingos with limit and offset parameters' })
+  @ApiOperation({ summary: 'Get bingos paginated list of bingos' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Here are the bingos' })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
@@ -100,6 +100,9 @@ export class BingoController {
 
   @Get(':id/activities')
   @UseGuards(AuthGuard)
+  @ApiOperation({summary: 'Get paginated list of bingo activities'})
+  @ApiResponse({status: HttpStatus.OK, description: 'Sucessful query of bingo activities'})
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'No bingo with ID provided was found'})
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
   async getActivities(
