@@ -47,7 +47,7 @@ export class FormatUserActivitiesHandler {
 
   private async preloadUsers(activities: Activity[]): Promise<void> {
     const userIds = activities.flatMap(
-      (activity) => [activity.trackableId, activity.createdBy].filter(Boolean) as number[],
+      (activity) => [activity.trackableId, activity.createdById].filter(Boolean) as number[],
     );
 
     const users = await this.userRepository.find({ where: { id: In(userIds) } });
@@ -98,11 +98,11 @@ export class FormatUserActivitiesHandler {
   }
 
   private async getRequester(activity: Activity): Promise<UserDto | null> {
-    if (activity.createdBy === null) {
+    if (activity.createdById === null) {
       return null;
     }
 
-    return this.getUserById(activity.createdBy);
+    return this.getUserById(activity.createdById);
   }
 
   private async formatUserUpdatedActivity(activity: Activity): Promise<ActivityDto<UserDto>> {

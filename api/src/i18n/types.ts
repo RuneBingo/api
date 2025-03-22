@@ -24,6 +24,19 @@ export type I18nTranslations = {
             "user": string;
         };
     };
+    "bingo": {
+        "findById": {
+            "notFound": string;
+        };
+        "updateBingo": {
+            "bingoNotFound": string;
+            "bingoNotPending": string;
+            "notAuthorized": string;
+        };
+        "searchBingoActivities": {
+            "bingoNotFound": string;
+        };
+    };
     "email": {
         "verificationEmail": {
             "subject": string;
