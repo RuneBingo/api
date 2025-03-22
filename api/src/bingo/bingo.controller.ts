@@ -3,6 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 import { AuthGuard } from '@/auth/guards/auth.guard';
+import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
 
 import { CreateBingoCommand } from './commands/create-bingo.command';
 import { BingoDto } from './dto/bingo.dto';
@@ -10,7 +11,6 @@ import { CreateBingoDto } from './dto/create-bingo.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
 import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
-import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -28,7 +28,9 @@ export class BingoController {
     const bingo = await this.commandBus.execute(
       new CreateBingoCommand({ requester: req.userEntity!, createBingoDto: body }),
     );
-    await this.commandBus.execute(new AddBingoParticipantCommand({user: req.userEntity!, bingo: bingo, role: 'owner'}));
+    await this.commandBus.execute(
+      new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: 'owner' }),
+    );
     return new BingoDto(bingo);
   }
 

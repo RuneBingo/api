@@ -4,11 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
+import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 import { I18nTranslations } from '@/i18n/types';
 
 import { Bingo } from '../bingo.entity';
 import { GetBingoByIdQuery, GetBingoByIdResult } from './get-bingo-by-id.query';
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 
 @QueryHandler(GetBingoByIdQuery)
 export class GetBingoByIdHandler {
@@ -20,14 +20,14 @@ export class GetBingoByIdHandler {
   ) {}
 
   async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
-    const whereCondition: any = { id: query.params.bingoId };
+    const whereCondition = { id: query.params.bingoId };
 
     if (!query.params.requester) {
-      whereCondition.private = false;
+      whereCondition['private'] = false;
     }
 
     const bingo = await this.bingoRepository.findOne({
-      where: { id: query.params.bingoId },
+      where: whereCondition,
     });
 
     if (!bingo) {

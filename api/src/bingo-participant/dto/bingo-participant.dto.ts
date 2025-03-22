@@ -1,32 +1,32 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { BingoParticipant } from "../bingo-participant.entity";
-import { UserDto } from "@/user/dto/user.dto";
+import { ApiProperty } from '@nestjs/swagger';
+
+import { UserDto } from '@/user/dto/user.dto';
+
+import { BingoParticipant } from '../bingo-participant.entity';
 
 export class BingoParticipantDto {
-    constructor(bingoParticipant: BingoParticipant)    {
-        this.user = null;
-        this.role = bingoParticipant.role;
-    }
+  constructor(bingoParticipant: BingoParticipant) {
+    this.user = null;
+    this.role = bingoParticipant.role;
+  }
 
-    static async fromBingoParticipant(bingoParticipant: BingoParticipant): Promise<BingoParticipantDto> {
-        const dto = new BingoParticipantDto(bingoParticipant);
+  static async fromBingoParticipant(bingoParticipant: BingoParticipant): Promise<BingoParticipantDto> {
+    const dto = new BingoParticipantDto(bingoParticipant);
 
-        const [user] = await Promise.all([
-            bingoParticipant.user,
-        ]);
+    const [user] = await Promise.all([bingoParticipant.user]);
 
-        dto.user = user;
-        //dto.team = team;
+    dto.user = user;
+    //dto.team = team;
 
-        return dto;
-    }
-    // To implement
-    //@ApiProperty()
-    //team: TeamDto | null;
+    return dto;
+  }
+  // To implement
+  //@ApiProperty()
+  //team: TeamDto | null;
 
-    @ApiProperty()
-    user: UserDto | null;
+  @ApiProperty()
+  user: UserDto | null;
 
-    @ApiProperty()
-    role: string;
+  @ApiProperty()
+  role: string;
 }
