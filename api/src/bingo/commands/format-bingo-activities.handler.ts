@@ -59,7 +59,7 @@ export class FormatBingoActivitiesHandler {
       .getOne();
 
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException("No user with id found");
     }
 
     const userDto = new UserDto(user);
