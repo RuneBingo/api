@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreateBingoCommand, CreateBingoResult } from './create-bingo.command';
-import { BingoCreatedEvent } from '../events/bingo-created.event';
 import { Bingo } from '../bingo.entity';
+import { BingoCreatedEvent } from '../events/bingo-created.event';
 
 @CommandHandler(CreateBingoCommand)
 export class CreateBingoHandler {

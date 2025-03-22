@@ -15,18 +15,17 @@ export class GetBingoByIdHandler {
     private readonly i18nService: I18nService<I18nTranslations>,
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
-  ) { }
+  ) {}
 
   async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
-
-    const whereCondition: any = {id: query.params.bingoId}
+    const whereCondition = { id: query.params.bingoId };
 
     if (!query.params.requester) {
-      whereCondition.private = false;
+      whereCondition['private'] = false;
     }
 
     const bingo = await this.bingoRepository.findOne({
-      where: whereCondition
+      where: whereCondition,
     });
 
     if (!bingo) {

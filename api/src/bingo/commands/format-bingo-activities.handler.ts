@@ -1,26 +1,27 @@
+import { Logger, NotFoundException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
-import { FormatBingoActivitiesCommand, FormatBingoActivitiesResult } from './format-bingo-activities.command';
-import { In, Repository } from 'typeorm';
-import { Bingo } from '../bingo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BingoDto } from '../dto/bingo.dto';
+import { In, Repository } from 'typeorm';
+
 import { Activity } from '@/activity/activity.entity';
 import { ActivityDto } from '@/activity/dto/activity.dto';
 import { UserDto } from '@/user/dto/user.dto';
 import { User } from '@/user/user.entity';
-import { Logger, NotFoundException } from '@nestjs/common';
+
+import { Bingo } from '../bingo.entity';
+import { FormatBingoActivitiesCommand, FormatBingoActivitiesResult } from './format-bingo-activities.command';
+import { BingoDto } from '../dto/bingo.dto';
 
 @CommandHandler(FormatBingoActivitiesCommand)
 export class FormatBingoActivitiesHandler {
-    private bingosMap = new Map<number, BingoDto>()
-      private readonly logger = new Logger(FormatBingoActivitiesHandler.name);
-    
+  private bingosMap = new Map<number, BingoDto>();
+  private readonly logger = new Logger(FormatBingoActivitiesHandler.name);
+
   constructor(
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
   ) {}
 
   async execute(command: FormatBingoActivitiesCommand): Promise<FormatBingoActivitiesResult> {

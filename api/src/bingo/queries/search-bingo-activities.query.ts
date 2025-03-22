@@ -1,8 +1,9 @@
-import { Activity } from '@/activity/activity.entity';
-import { PaginatedDtoWithoutTotal } from '@/db/dto/paginated.dto';
-import { PaginatedQueryParams } from '@/db/paginated-query.utils';
-import { User } from '@/user/user.entity';
 import { Query } from '@nestjs/cqrs';
+
+import { type Activity } from '@/activity/activity.entity';
+import { type PaginatedDtoWithoutTotal } from '@/db/dto/paginated.dto';
+import { type PaginatedQueryParams } from '@/db/paginated-query.utils';
+import { type User } from '@/user/user.entity';
 
 export type SearchBingoActivitiesParams = PaginatedQueryParams<{
   requester: User;

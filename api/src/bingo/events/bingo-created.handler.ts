@@ -1,13 +1,12 @@
 import { CommandBus, EventsHandler } from '@nestjs/cqrs';
-import { BingoCreatedEvent } from './bingo-created.event';
+
 import { CreateActivityCommand } from '@/activity/commands/create-activity.command';
-import { Logger } from '@nestjs/common';
+
+import { BingoCreatedEvent } from './bingo-created.event';
 
 @EventsHandler(BingoCreatedEvent)
 export class BingoCreatedHandler {
-    constructor(private readonly commandBus: CommandBus,
-    
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   async handle(event: BingoCreatedEvent) {
     const { bingoId, requesterId, dto } = event.params;

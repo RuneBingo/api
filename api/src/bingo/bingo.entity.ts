@@ -1,4 +1,4 @@
-import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
 
 import { StrongEntity } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
@@ -30,10 +30,10 @@ export class Bingo extends StrongEntity {
   @Column()
   fullLineValue: number;
 
-  @Column({type: 'timestamptz'})
+  @Column({ type: 'timestamptz' })
   startDate: Date;
 
-  @Column({type: 'timestamptz'})
+  @Column({ type: 'timestamptz' })
   endDate: Date;
 
   @ManyToOne(() => User, { nullable: true, lazy: true })
@@ -57,7 +57,7 @@ export class Bingo extends StrongEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   endedAt: Date;
 
-  @Column({ name: 'ended_by' ,type: 'int', nullable: true })
+  @Column({ name: 'ended_by', type: 'int', nullable: true })
   endedById: number | null = null;
 
   @ManyToOne(() => User, { nullable: true })
@@ -67,7 +67,7 @@ export class Bingo extends StrongEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   canceledAt: Date;
 
-  @Column({ name: 'canceled_by' ,type: 'int', nullable: true })
+  @Column({ name: 'canceled_by', type: 'int', nullable: true })
   canceledById: number | null = null;
 
   @ManyToOne(() => User, { nullable: true })

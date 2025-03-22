@@ -17,16 +17,16 @@ import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@/auth/guards/auth.guard';
 
 import { CreateBingoCommand } from './commands/create-bingo.command';
+import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities.command';
+import { UpdateBingoCommand } from './commands/update-bingo-command';
 import { BingoDto } from './dto/bingo.dto';
 import { CreateBingoDto } from './dto/create-bingo.dto';
-import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
-import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
-import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
-import { UpdateBingoDto } from './dto/update-bingo.dto';
-import { UpdateBingoCommand } from './commands/update-bingo-command';
 import { PaginatedBingoActivitiesDto } from './dto/paginated-bingo-activities.dto';
+import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
+import { UpdateBingoDto } from './dto/update-bingo.dto';
+import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
-import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities.command';
+import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -116,7 +116,7 @@ export class BingoController {
     } satisfies SearchBingoActivitiesParams;
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingoActivitiesQuery(params));
-    const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items))
+    const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items));
     return new PaginatedBingoActivitiesDto({ items: itemsDto, ...pagination });
   }
 }
