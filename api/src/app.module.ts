@@ -15,6 +15,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { RedisModule } from './redis/redis.module';
 import { SessionModule } from './session/session.module';
 import { UserModule } from './user/user.module';
+import { BingoparticipantModule } from './bingo-participant/bingo-participant.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserModule } from './user/user.module';
     EmailerModule,
     JobsModule,
     BingoModule,
+    BingoparticipantModule,
   ],
   providers: [EmailerService],
   controllers: [AppController],
