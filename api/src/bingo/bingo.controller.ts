@@ -24,6 +24,9 @@ import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
 import { UpdateBingoDto } from './dto/update-bingo.dto';
 import { UpdateBingoCommand } from './commands/update-bingo-command';
+import { PaginatedBingoActivitiesDto } from './dto/paginated-bingo-activities.dto';
+import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
+import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities.command';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -79,10 +82,10 @@ export class BingoController {
 
   @Put(':id')
   @UseGuards(AuthGuard)
-  @ApiOperation({summary: 'Update a bingo event'})
-  @ApiResponse({status: HttpStatus.OK, description: 'The bingo has been updated', type: BingoDto})
-  @ApiResponse({status: HttpStatus.BAD_REQUEST, description: 'Invalid request parameters'})
-  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'Not authorized to modify this bingo event'})
+  @ApiOperation({ summary: 'Update a bingo event' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'The bingo has been updated', type: BingoDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid request parameters' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized to modify this bingo event' })
   async update(
     @Req() req: Request,
     @Param('id') id: number,
@@ -93,5 +96,27 @@ export class BingoController {
     );
 
     return new BingoDto(bingo);
+  }
+
+  @Get(':id/activities')
+  @UseGuards(AuthGuard)
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'offset', required: false })
+  async getActivities(
+    @Req() req: Request,
+    @Param('id') bingoId: number,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ): Promise<PaginatedBingoActivitiesDto> {
+    const params = {
+      requester: req.userEntity!,
+      bingoId,
+      limit: limit ? parseInt(limit) : undefined,
+      offset: offset ? parseInt(offset) : undefined,
+    } satisfies SearchBingoActivitiesParams;
+
+    const { items, ...pagination } = await this.queryBus.execute(new SearchBingoActivitiesQuery(params));
+    const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items))
+    return new PaginatedBingoActivitiesDto({ items: itemsDto, ...pagination });
   }
 }

@@ -33,6 +33,9 @@ export type I18nTranslations = {
             "bingoNotPending": string;
             "notAuthorized": string;
         };
+        "searchBingoActivities": {
+            "bingoNotFound": string;
+        };
     };
     "email": {
         "verificationEmail": {
