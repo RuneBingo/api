@@ -1,4 +1,16 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
@@ -10,6 +22,8 @@ import { CreateBingoDto } from './dto/create-bingo.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
 import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
+import { UpdateBingoDto } from './dto/update-bingo.dto';
+import { UpdateBingoCommand } from './commands/update-bingo-command';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -61,5 +75,22 @@ export class BingoController {
     const params: GetBingoByIdParams = { bingoId: id, requester: req.userEntity! };
     const bingo = await this.queryBus.execute(new GetBingoByIdQuery(params));
     return await BingoDto.fromBingo(bingo);
+  }
+
+  @Put(':id')
+  @ApiOperation({summary: 'Update a bingo event'})
+  @ApiResponse({status: HttpStatus.OK, description: 'The bingo has been updated', type: BingoDto})
+  @ApiResponse({status: HttpStatus.BAD_REQUEST, description: 'Invalid request parameters'})
+  @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'Not authorized to modify this bingo event'})
+  async update(
+    @Req() req: Request,
+    @Param('id') id: number,
+    @Body(new ValidationPipe()) updateBingoDto: UpdateBingoDto,
+  ): Promise<BingoDto> {
+    const bingo = await this.commandBus.execute(
+      new UpdateBingoCommand({ requester: req.userEntity!, bingoId: id, updateBingoDto: updateBingoDto }),
+    );
+
+    return new BingoDto(bingo);
   }
 }
