@@ -28,6 +28,14 @@ export type I18nTranslations = {
         "findById": {
             "notFound": string;
         };
+        "updateBingo": {
+            "bingoNotFound": string;
+            "bingoNotPending": string;
+            "notAuthorized": string;
+        };
+        "searchBingoActivities": {
+            "bingoNotFound": string;
+        };
     };
     "email": {
         "verificationEmail": {

@@ -23,6 +23,8 @@ export class SearchBingosHandler {
       bingos.andWhere('bingo.private = false');
     }
 
+    // TO-DO -- Verify that the user is a participant of a private bingo
+
     return resolvePaginatedQueryWithoutTotal(bingos, pagination);
   }
 }

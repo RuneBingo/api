@@ -16,6 +16,7 @@ export class GetBingoByIdHandler {
     private readonly i18nService: I18nService<I18nTranslations>,
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
+
     private readonly queryBus: QueryBus,
   ) {}
 
