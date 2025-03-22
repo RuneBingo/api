@@ -6,5 +6,8 @@
         "bingoNotFound": "No bingo with this id was found.",
         "bingoNotPending": "The bingo event has already started.",
         "notAuthorized": "You are not authorized to modify this bingo"
+    },
+    "searchBingoActivities": {
+        "bingoNotFound": "No bingo with this id was found."
     }
 }
