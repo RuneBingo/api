@@ -78,6 +78,7 @@ export class BingoController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({summary: 'Update a bingo event'})
   @ApiResponse({status: HttpStatus.OK, description: 'The bingo has been updated', type: BingoDto})
   @ApiResponse({status: HttpStatus.BAD_REQUEST, description: 'Invalid request parameters'})
