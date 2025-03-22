@@ -18,6 +18,7 @@ import { GetBingoByIdHandler } from './queries/get-bingo-by-id.handler';
 import { SearchBingoActivitiesHandler } from './queries/search-bingo-activities.handler';
 import { SearchBingosHandler } from './queries/search-bingos.handler';
 
+@Module({
   imports: [TypeOrmModule.forFeature([Bingo, User, Activity])],
   controllers: [BingoController],
   providers: [
