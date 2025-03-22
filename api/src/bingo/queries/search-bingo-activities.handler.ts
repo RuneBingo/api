@@ -1,13 +1,15 @@
+import { NotFoundException } from '@nestjs/common';
 import { QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Activity } from '@/activity/activity.entity';
+import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
+
+import { Activity } from '@/activity/activity.entity';
+import { resolvePaginatedQueryWithoutTotal } from '@/db/paginated-query.utils';
+import { I18nTranslations } from '@/i18n/types';
+
 import { SearchBingoActivitiesQuery, SearchBingoActivitiesResult } from './search-bingo-activities.query';
 import { Bingo } from '../bingo.entity';
-import { NotFoundException } from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
-import { I18nTranslations } from '@/i18n/types';
-import { resolvePaginatedQueryWithoutTotal } from '@/db/paginated-query.utils';
 
 @QueryHandler(SearchBingoActivitiesQuery)
 export class SearchBingoActivitiesHandler {
@@ -21,7 +23,7 @@ export class SearchBingoActivitiesHandler {
 
   async execute(query: SearchBingoActivitiesQuery): Promise<SearchBingoActivitiesResult> {
     const { requester, bingoId, ...pagination } = query.params;
-    
+
     const bingo = await this.bingoRepository.findOneBy({ id: bingoId });
 
     if (!bingo) {

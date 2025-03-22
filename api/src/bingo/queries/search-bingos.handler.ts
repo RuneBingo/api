@@ -16,10 +16,8 @@ export class SearchBingosHandler {
 
   async execute(query: SearchBingosQuery): Promise<SearchBingosResult> {
     const { requester, ...pagination } = query.params;
-    
-    const bingos = await this.bingoRepository
-    .createQueryBuilder('bingo')
-    .leftJoinAndSelect('bingo.createdBy', 'createdBy');
+
+    const bingos = this.bingoRepository.createQueryBuilder('bingo').leftJoinAndSelect('bingo.createdBy', 'createdBy');
 
     if (!requester) {
       bingos.andWhere('bingo.private = false');

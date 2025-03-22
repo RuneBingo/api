@@ -1,9 +1,9 @@
 import { Query } from '@nestjs/cqrs';
 
 import { type PaginatedQueryParams, type PaginatedResultWithoutTotal } from '@/db/paginated-query.utils';
+import { type User } from '@/user/user.entity';
 
 import { type Bingo } from '../bingo.entity';
-import { User } from '@/user/user.entity';
 
 export type SearchBingosParams = PaginatedQueryParams<{
   requester: User | undefined;

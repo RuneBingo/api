@@ -32,7 +32,7 @@ export class BingoDto {
       bingo.startedBy,
       bingo.endedBy,
       bingo.canceledBy,
-      bingo.updatedBy
+      bingo.updatedBy,
     ]);
 
     dto.createdBy = createdBy ? new UserDto(createdBy) : null;

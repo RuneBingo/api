@@ -1,12 +1,14 @@
-import { ActivityDto } from "@/activity/dto/activity.dto";
-import { BingoDto } from "../dto/bingo.dto";
-import { Command } from "@nestjs/cqrs";
-import { Activity } from "@/activity/activity.entity";
+import { Command } from '@nestjs/cqrs';
+
+import { type Activity } from '@/activity/activity.entity';
+import { type ActivityDto } from '@/activity/dto/activity.dto';
+
+import { type BingoDto } from '../dto/bingo.dto';
 
 export type FormatBingoActivitiesResult = ActivityDto<BingoDto>[];
 
 export class FormatBingoActivitiesCommand extends Command<FormatBingoActivitiesResult> {
-    constructor(public readonly activities: Activity[]) {
-        super();
-    }
+  constructor(public readonly activities: Activity[]) {
+    super();
+  }
 }
