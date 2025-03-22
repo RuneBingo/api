@@ -48,7 +48,7 @@ export class BingoController {
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingosQuery(params));
 
-    const bingosDto = items.map((bingo) => new BingoDto(bingo));
+    const bingosDto = await Promise.all(items.map(async (bingo) => await BingoDto.fromBingo(bingo)));
 
     return new PaginatedBingosDto({ items: bingosDto, ...pagination });
   }
