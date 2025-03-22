@@ -15,6 +15,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 import { AuthGuard } from '@/auth/guards/auth.guard';
+import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
 
 import { CreateBingoCommand } from './commands/create-bingo.command';
 import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities.command';
@@ -43,6 +44,9 @@ export class BingoController {
   async create(@Body(new ValidationPipe()) body: CreateBingoDto, @Req() req: Request): Promise<BingoDto> {
     const bingo = await this.commandBus.execute(
       new CreateBingoCommand({ requester: req.userEntity!, createBingoDto: body }),
+    );
+    await this.commandBus.execute(
+      new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: 'owner' }),
     );
     return new BingoDto(bingo);
   }
