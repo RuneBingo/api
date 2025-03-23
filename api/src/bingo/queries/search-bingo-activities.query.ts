@@ -45,8 +45,10 @@ export class SearchBingoActivitiesHandler {
 
     const q = this.activityRepository
       .createQueryBuilder('activity')
+      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = activity.trackable_id')
       .where('activity.trackable_type = :type', { type: 'Bingo' })
       .andWhere('activity.trackable_id = :id', { id: bingo.id })
+      .andWhere('(bingoParticipant.role = :organizer OR bingoParticipant.role = :owner)', {organizer: 'Organizer', owner: 'Owner'})
       .orderBy('activity.created_at', 'DESC');
 
     return resolvePaginatedQueryWithoutTotal(q, pagination);
