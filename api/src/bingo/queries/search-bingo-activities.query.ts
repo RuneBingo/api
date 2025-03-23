@@ -42,14 +42,23 @@ export class SearchBingoActivitiesHandler {
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.searchBingoActivities.bingoNotFound'));
     }
+    console.log(requester.role);
 
     const q = this.activityRepository
       .createQueryBuilder('activity')
-      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = activity.trackable_id')
       .where('activity.trackable_type = :type', { type: 'Bingo' })
+      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = activity.trackable_id')
       .andWhere('activity.trackable_id = :id', { id: bingo.id })
-      .andWhere('(bingoParticipant.role = :organizer OR bingoParticipant.role = :owner)', {organizer: 'Organizer', owner: 'Owner'})
-      .orderBy('activity.created_at', 'DESC');
+      .andWhere(
+        '((bingoParticipant.id = :requester_id AND bingoParticipant.role IN (:...bingoRoles)) OR :requesterRole IN (:...userRoles))',
+        {
+          requester_id: requester.id,
+          bingoRoles: ['owner', 'organizer'],
+          userRoles: ['admin', 'moderator'],
+          requesterRole: requester.role,
+        },
+      )
+      .orderBy('activity.createdAt', 'DESC');
 
     return resolvePaginatedQueryWithoutTotal(q, pagination);
   }

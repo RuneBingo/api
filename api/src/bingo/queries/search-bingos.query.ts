@@ -45,7 +45,10 @@ export class SearchBingosHandler {
       bingos.where('bingo.private = false');
     } else {
       bingos.leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = bingo.id');
-      bingos.where('(bingo.private = false OR bingoParticipant.user_id = :requesterId)', { requesterId: requester.id });
+      bingos.where(
+        '(bingo.private = false OR bingoParticipant.user_id = :requesterId OR :requesterRole IN (:...roles))',
+        { requesterId: requester.id, roles: ['moderator', 'admin'], requesterRole: requester.role },
+      );
     }
 
     return resolvePaginatedQueryWithoutTotal(bingos, pagination);

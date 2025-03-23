@@ -31,7 +31,8 @@ export class FormatBingoActivitiesHandler {
     const activities = command.activities.map((activity) => {
       const userId = activity.createdById;
       const userDto = userId ? (this.usersMap.get(userId) ?? null) : null;
-      return new ActivityDto(userDto, activity.createdAt, activity.key, 'Bingo created');
+      const action = activity.key.split('bingo.')[1];
+      return new ActivityDto(userDto, activity.createdAt, activity.key, `Bingo ${action} by ${userDto?.username}`);
     });
 
     return activities;

@@ -8,7 +8,6 @@ import { I18nTranslations } from '@/i18n/types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 
 export type GetBingoByIdParams = {
   bingoId: number;
@@ -34,32 +33,27 @@ export class GetBingoByIdHandler {
   ) {}
 
   async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
-    const whereCondition = { id: query.params.bingoId };
-
+    console.log("Requester id:", query.params.requester!.id)
+    console.log("Requester role", query.params.requester!.role)
+    const bingoId = Number(query.params.bingoId);
+    const q = this.bingoRepository
+      .createQueryBuilder('bingo')
+      .where('bingo.id = :bingoId', { bingoId: bingoId })
+      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = bingo.id')
     if (!query.params.requester) {
-      whereCondition['private'] = false;
+      q.andWhere('bingo.private = false');
+    } else {
+      q.andWhere('(bingo.private = false OR :requesterRole IN (:...roles) OR bingoParticipant.user_id = :requesterId)', {
+        requesterId: query.params.requester.id,
+        requesterRole: query.params.requester.role,
+        roles: ['moderator', 'admin']
+      });
     }
 
-    const bingo = await this.bingoRepository.findOne({
-      where: whereCondition,
-    });
-
-    if (!bingo || !query.params.requester) {
-      throw new NotFoundException(this.i18nService.t('bingo.findById.notFound'));
-    }
-
-    if (bingo.private === false) {
-      return bingo;
-    }
-
-    const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingo.id }));
-
-    const participant = bingoParticipants.find((participant) => {
-      return participant.userId === query.params.requester!.id;
-    });
-
-    if (!participant) {
-      throw new NotFoundException(this.i18nService.t('bingo.findById.notFound'));
+    const bingo = await q.getOne();
+    console.log("Found bingo:", bingo);
+    if (!bingo) {
+      throw new NotFoundException();
     }
 
     return bingo;
