@@ -33,7 +33,6 @@ export class FormatBingoActivitiesHandler {
             await this.getUserById(activity.createdById!),
             activity.createdAt,
             activity.key,
-            this.bingosMap.get(activity.trackableId)!,
             'Bingo created',
           ),
       ),
@@ -59,7 +58,7 @@ export class FormatBingoActivitiesHandler {
       .getOne();
 
     if (!user) {
-      throw new NotFoundException("No user with id found");
+      throw new NotFoundException('No user with id found');
     }
 
     const userDto = new UserDto(user);
