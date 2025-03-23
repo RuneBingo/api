@@ -5,7 +5,7 @@ import { type ActivityDto } from '@/activity/dto/activity.dto';
 
 import { type BingoDto } from '../dto/bingo.dto';
 
-export type FormatBingoActivitiesResult = ActivityDto<BingoDto>[];
+export type FormatBingoActivitiesResult = ActivityDto[];
 
 export class FormatBingoActivitiesCommand extends Command<FormatBingoActivitiesResult> {
   constructor(public readonly activities: Activity[]) {

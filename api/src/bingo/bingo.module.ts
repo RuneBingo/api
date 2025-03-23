@@ -1,12 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
-import { AddBingoParticipantHandler } from '@/bingo-participant/commands/add-bingo-participant.handler';
-import { GetBingoParticipantsHandler } from '@/bingo-participant/queries/get-bingo-participants.handler';
 import { Activity } from '@/activity/activity.entity';
 import { User } from '@/user/user.entity';
-
 
 import { BingoController } from './bingo.controller';
 import { Bingo } from './bingo.entity';

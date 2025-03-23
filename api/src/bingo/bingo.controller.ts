@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 import { AuthGuard } from '@/auth/guards/auth.guard';
 import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
@@ -22,12 +22,12 @@ import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities
 import { UpdateBingoCommand } from './commands/update-bingo-command';
 import { BingoDto } from './dto/bingo.dto';
 import { CreateBingoDto } from './dto/create-bingo.dto';
-import { PaginatedBingoActivitiesDto } from './dto/paginated-bingo-activities.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
 import { UpdateBingoDto } from './dto/update-bingo.dto';
 import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
+import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -104,9 +104,9 @@ export class BingoController {
 
   @Get(':id/activities')
   @UseGuards(AuthGuard)
-  @ApiOperation({summary: 'Get paginated list of bingo activities'})
-  @ApiResponse({status: HttpStatus.OK, description: 'Sucessful query of bingo activities'})
-  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'No bingo with ID provided was found'})
+  @ApiOperation({ summary: 'Get paginated list of bingo activities' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sucessful query of bingo activities', type: PaginatedActivitiesDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No bingo with ID provided was found' })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
   async getActivities(
@@ -114,7 +114,7 @@ export class BingoController {
     @Param('id') bingoId: number,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
-  ): Promise<PaginatedBingoActivitiesDto> {
+  ): Promise<PaginatedActivitiesDto> {
     const params = {
       requester: req.userEntity!,
       bingoId,
@@ -124,6 +124,6 @@ export class BingoController {
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingoActivitiesQuery(params));
     const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items));
-    return new PaginatedBingoActivitiesDto({ items: itemsDto, ...pagination });
+    return new PaginatedActivitiesDto({ items: itemsDto, ...pagination });
   }
 }
