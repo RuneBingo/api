@@ -28,12 +28,11 @@ jobs:
           cache: 'npm'
 
       - name: 📄 Create .env from secret
-        run: echo "${{ secrets.ENV }}" > .env
+        run: echo "${{ secrets.ENV }}" | base64 -d > .env
 
       - name: 📄 Create config.local.json from secret
         run: |
-          mkdir -p api
-          echo "${{ secrets.CONFIG_LOCAL_JSON }}" > api/config.local.json
+          echo "${{ secrets.CONFIG_LOCAL_JSON }}" | base64 -d > api/config.local.json
 
       - name: 🐳 Start Docker containers
         run: docker compose up -d
