@@ -1,23 +1,107 @@
-import { Command } from '@nestjs/cqrs';
+import { Command, CommandHandler, EventBus } from '@nestjs/cqrs';
 
 import { type User } from '@/user/user.entity';
 
-import { type Bingo } from '../bingo.entity';
+import { Bingo } from '../bingo.entity';
 import { type CreateBingoDto } from '../dto/create-bingo.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { BingoCreatedEvent } from '../events/bingo-created.event';
 
 export type CreateBingoParams = {
   requester: User;
-  createBingoDto: CreateBingoDto;
+  language: string;
+  title: string;
+  description: string;
+  isPrivate: boolean;
+  width: number;
+  height: number;
+  fullLineValue: number;
+  startDate: Date;
+  endDate: Date;
 };
 
 export type CreateBingoResult = Bingo;
 
 export class CreateBingoCommand extends Command<Bingo> {
   public readonly requester: User;
-  public readonly createBingoDto: CreateBingoDto;
-  constructor({ requester, createBingoDto }: CreateBingoParams) {
+  public readonly language: string;
+  public readonly title: string;
+  public readonly description: string;
+  public readonly isPrivate: boolean;
+  public readonly width: number;
+  public readonly height: number;
+  public readonly fullLineValue: number;
+  public readonly startDate: Date;
+  public readonly endDate: Date;
+  constructor({
+    requester,
+    language,
+    title,
+    description,
+    isPrivate,
+    width,
+    height,
+    fullLineValue,
+    startDate,
+    endDate,
+  }: CreateBingoParams) {
     super();
     this.requester = requester;
-    this.createBingoDto = createBingoDto;
+    this.language = language;
+    this.title = title;
+    this.description = description;
+    this.isPrivate = isPrivate;
+    this.width = width;
+    this.height = height;
+    this.fullLineValue = fullLineValue;
+    this.startDate = startDate;
+    this.endDate = endDate;
+  }
+}
+
+@CommandHandler(CreateBingoCommand)
+export class CreateBingoHandler {
+  constructor(
+    @InjectRepository(Bingo)
+    private readonly bingoRepository: Repository<Bingo>,
+    private readonly eventBus: EventBus,
+  ) {}
+
+  async execute(command: CreateBingoCommand): Promise<CreateBingoResult> {
+    const { requester, language, title, description, isPrivate, width, height, fullLineValue, startDate, endDate } =
+      command;
+
+    const bingo = new Bingo();
+    bingo.createdById = requester.id;
+    bingo.language = language;
+    bingo.title = title;
+    bingo.description = description;
+    bingo.private = isPrivate;
+    bingo.width = width;
+    bingo.height = height;
+    bingo.fullLineValue = fullLineValue;
+    bingo.startDate = startDate;
+    bingo.endDate = endDate;
+    bingo.createdById = command.requester.id;
+    await this.bingoRepository.save(bingo);
+
+    this.eventBus.publish(
+      new BingoCreatedEvent({
+        bingoId: bingo.id,
+        requesterId: command.requester.id,
+        language,
+        title,
+        description,
+        private: isPrivate,
+        width,
+        height,
+        fullLineValue,
+        startDate,
+        endDate
+      }),
+    );
+
+    return bingo;
   }
 }

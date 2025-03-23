@@ -43,7 +43,18 @@ export class BingoController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'The input values are invalid' })
   async create(@Body(new ValidationPipe()) body: CreateBingoDto, @Req() req: Request): Promise<BingoDto> {
     const bingo = await this.commandBus.execute(
-      new CreateBingoCommand({ requester: req.userEntity!, createBingoDto: body }),
+      new CreateBingoCommand({ 
+        requester: req.userEntity!,
+        language: body.language,
+        title: body.title,
+        description: body.description,
+        isPrivate: body.private,
+        width: body.width,
+        height: body.height,
+        fullLineValue: body.fullLineValue,
+        startDate: body.startDate,
+        endDate: body.endDate,
+       }),
     );
     await this.commandBus.execute(
       new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: 'owner' }),
@@ -93,10 +104,21 @@ export class BingoController {
   async update(
     @Req() req: Request,
     @Param('id') id: number,
-    @Body(new ValidationPipe()) updateBingoDto: UpdateBingoDto,
+    @Body(new ValidationPipe()) body: UpdateBingoDto,
   ): Promise<BingoDto> {
     const bingo = await this.commandBus.execute(
-      new UpdateBingoCommand({ requester: req.userEntity!, bingoId: id, updateBingoDto: updateBingoDto }),
+      new UpdateBingoCommand({ 
+        requester: req.userEntity!, 
+        bingoId: id, 
+        updates: {
+          language: body.language,
+          title: body.title,
+          description: body.description,
+          isPrivate: body.private,
+          fullLineValue: body.fullLineValue,
+          startDate: body.startDate,
+          endDate: body.endDate,
+      } }),
     );
 
     return new BingoDto(bingo);

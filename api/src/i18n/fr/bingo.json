@@ -4,8 +4,8 @@
     },
     "updateBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
-        "bingoNotPending": "L'évènement de bingo est déjà commencé",
-        "notAuthorized": "Vous n'êtes pas autorisé à modifier ce bingo"
+        "bingoNotPending": "L'évènement de bingo est déjà commencé.",
+        "notAuthorized": "Vous n'êtes pas autorisé à modifier ce bingo."
     },
     "searchBingoActivities": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé."
