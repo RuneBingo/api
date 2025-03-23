@@ -16,7 +16,6 @@ jobs:
   run-ci:
     name: Run CI Pipeline
     runs-on: ubuntu-latest
-    environment: CI
 
     steps:
       - name: 📥 Checkout repository
@@ -29,11 +28,11 @@ jobs:
           cache: 'npm'
 
       - name: 📄 Create .env from secret
-        run: echo "${{ secrets.ENV }}" | base64 -d > .env
+        run: echo "${{ secrets.CI_ENV }}" | base64 -d > .env
 
       - name: 📄 Create config.local.json from secret
         run: |
-          echo "${{ secrets.CONFIG_LOCAL_JSON }}" | base64 -d > api/config.local.json
+          echo "${{ secrets.CI_API_CONFIG_LOCAL_JSON }}" | base64 -d > api/config.local.json
 
       - name: 🐳 Start Docker containers
         run: docker compose up -d
