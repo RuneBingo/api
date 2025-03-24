@@ -71,6 +71,11 @@ export class CreateBingoHandler {
     const { requester, language, title, description, isPrivate, width, height, fullLineValue, startDate, endDate } =
       command;
 
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    const formattedEndDate = endDate.toISOString().split('T')[0];
+
+    console.log(formattedStartDate);
+
     const bingo = new Bingo();
     bingo.createdById = requester.id;
     bingo.language = language;
@@ -80,8 +85,8 @@ export class CreateBingoHandler {
     bingo.width = width;
     bingo.height = height;
     bingo.fullLineValue = fullLineValue;
-    bingo.startDate = startDate;
-    bingo.endDate = endDate;
+    bingo.startDate = formattedStartDate;
+    bingo.endDate = formattedEndDate;
     bingo.createdById = command.requester.id;
     bingo.createdBy = Promise.resolve(requester);
     await this.bingoRepository.save(bingo);
@@ -97,8 +102,8 @@ export class CreateBingoHandler {
         width,
         height,
         fullLineValue,
-        startDate,
-        endDate,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
       }),
     );
 

@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToMany } from 'typeorm';
 import { Bingo } from '@/bingo/bingo.entity';
 import { StrongEntityParanoid } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
+
 import { BingoRoles } from './roles/bingo-roles.constants';
 
 @Entity()
@@ -21,7 +22,7 @@ export class BingoParticipant extends StrongEntityParanoid {
   @JoinColumn({ name: 'bingo_id' })
   bingo: Promise<Bingo>;
 
-  @Column({type: 'varchar', default: 'participant'})
+  @Column({ type: 'varchar', default: 'participant' })
   role: BingoRoles;
 
   // To implement when bingoTeam is done

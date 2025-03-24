@@ -90,7 +90,7 @@ export abstract class BaseEntityParanoid extends BaseEntity {
    * - If the entity was deleted by the system, this field is `null`.
    * - If the entity is not deleted, this field is `null`.
    */
-  @Column({name: 'deleted_by' ,type: 'int', nullable: true })
+  @Column({ name: 'deleted_by', type: 'int', nullable: true })
   deletedById: number | null = null;
 
   get isDeleted(): boolean {
@@ -120,7 +120,7 @@ export abstract class StrongEntityParanoid extends StrongEntity {
    * - If the entity was deleted by the system, this field is `null`.
    * - If the entity is not deleted, this field is `null`.
    */
-  @Column({name: 'deleted_by' ,type: 'int', nullable: true })
+  @Column({ name: 'deleted_by', type: 'int', nullable: true })
   deletedById: number | null = null;
 
   get isDeleted(): boolean {

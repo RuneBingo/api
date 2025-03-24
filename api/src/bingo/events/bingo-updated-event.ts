@@ -1,5 +1,6 @@
-import { CreateActivityCommand } from '@/activity/commands/create-activity.command';
 import { CommandBus, EventsHandler } from '@nestjs/cqrs';
+
+import { CreateActivityCommand } from '@/activity/commands/create-activity.command';
 
 export type BingoUpdatedParams = {
   bingoId: number;
@@ -12,8 +13,8 @@ export type BingoUpdatedParams = {
     width?: number;
     height?: number;
     fullLineValue?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
   };
 };
 
@@ -28,8 +29,8 @@ export class BingoUpdatedEvent {
     width?: number;
     height?: number;
     fullLineValue?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
   };
   constructor({ bingoId, requesterId, updates }: BingoUpdatedParams) {
     this.bingoId = bingoId;

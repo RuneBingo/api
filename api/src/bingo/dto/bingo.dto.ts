@@ -62,10 +62,10 @@ export class BingoDto {
   fullLineValue: number;
 
   @ApiProperty()
-  startDate: Date;
+  startDate: string;
 
   @ApiProperty()
-  endDate: Date;
+  endDate: string;
 
   @ApiProperty()
   startedAt: Date;

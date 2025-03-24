@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
@@ -14,13 +27,14 @@ import {
 import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
 import { AuthGuard } from '@/auth/guards/auth.guard';
 import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
+import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
 import { UserDto } from '@/user/dto/user.dto';
 
-import { CancelBingoCommand } from './commands/cancel-bingo-command';
+import { CancelBingoCommand } from './commands/cancel-bingo.command';
 import { CreateBingoCommand } from './commands/create-bingo.command';
-import { DeleteBingoCommand } from './commands/delete-bingo-command';
+import { DeleteBingoCommand } from './commands/delete-bingo.command';
 import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities.command';
-import { UpdateBingoCommand } from './commands/update-bingo-command';
+import { UpdateBingoCommand } from './commands/update-bingo.command';
 import { BingoDto } from './dto/bingo.dto';
 import { CreateBingoDto } from './dto/create-bingo.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
@@ -28,7 +42,6 @@ import { UpdateBingoDto } from './dto/update-bingo.dto';
 import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
-import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -61,7 +74,7 @@ export class BingoController {
       new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: BingoRoles.Owner }),
     );
     const createdBy = new UserDto(await bingo.createdBy);
-    return new BingoDto(bingo, {createdBy});
+    return new BingoDto(bingo, { createdBy });
   }
 
   @Get()
@@ -82,7 +95,9 @@ export class BingoController {
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingosQuery(params));
 
-    const bingosDto = await Promise.all(items.map(async (bingo) => new BingoDto(bingo, {createdBy: new UserDto(await bingo.createdBy)})));
+    const bingosDto = await Promise.all(
+      items.map(async (bingo) => new BingoDto(bingo, { createdBy: new UserDto(await bingo.createdBy) })),
+    );
 
     return new PaginatedBingosDto({ items: bingosDto, ...pagination });
   }
@@ -152,7 +167,7 @@ export class BingoController {
     } satisfies SearchBingoActivitiesParams;
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingoActivitiesQuery(params));
-    console.log("Activities:", items);
+
     const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items));
     return new PaginatedActivitiesDto({ items: itemsDto, ...pagination });
   }

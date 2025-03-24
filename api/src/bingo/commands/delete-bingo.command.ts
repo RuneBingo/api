@@ -7,13 +7,12 @@ import { DataSource, Repository } from 'typeorm';
 import { Roles } from '@/auth/roles/roles.constants';
 import { userHasRole } from '@/auth/roles/roles.utils';
 import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
+import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
+import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
 import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
-import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
-import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { BingoDeletedEvent } from '../events/bingo-deleted-event';
 
 export type DeleteBingoParams = {

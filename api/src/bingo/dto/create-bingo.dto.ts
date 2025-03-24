@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsDate, IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsPositive, IsString, Matches } from 'class-validator';
 
 export class CreateBingoDto {
   @ApiProperty()
@@ -42,14 +41,14 @@ export class CreateBingoDto {
   fullLineValue: number;
 
   @ApiProperty()
-  @IsDate()
-  @IsNotEmpty()
-  @Type(() => Date)
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'startDate must be in the format yyyy-mm-dd',
+  })
   startDate: Date;
 
   @ApiProperty()
-  @IsDate()
-  @IsNotEmpty()
-  @Type(() => Date)
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'startDate must be in the format yyyy-mm-dd',
+  })
   endDate: Date;
 }

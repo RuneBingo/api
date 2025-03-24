@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Query, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { Activity } from '@/activity/activity.entity';
 import { type PaginatedDtoWithoutTotal } from '@/db/dto/paginated.dto';
@@ -36,7 +36,7 @@ export class SearchBingoActivitiesHandler {
   ) {}
 
   async execute(query: SearchBingoActivitiesQuery): Promise<SearchBingoActivitiesResult> {
-    const { requester, bingoId, ...pagination } = query.params;
+    const { bingoId, ...pagination } = query.params;
 
     const bingo = await this.bingoRepository.findOneBy({ id: bingoId });
 
@@ -51,7 +51,7 @@ export class SearchBingoActivitiesHandler {
       .where('activity.trackable_id = :trackableId', { trackableId: bingoId })
       .andWhere('(bingoParticipant.role IN (:...bingoRoles) OR user.role IN (:...roles))', {
         roles: ['admin', 'moderator'],
-        bingoRoles: ['organizer', 'owner']
+        bingoRoles: ['organizer', 'owner'],
       })
       .orderBy('activity.createdAt', 'DESC');
 

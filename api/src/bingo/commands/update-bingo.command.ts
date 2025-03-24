@@ -24,8 +24,8 @@ export type UpdateBingoParams = {
     width?: number;
     height?: number;
     fullLineValue?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
   };
 };
 
@@ -42,8 +42,8 @@ export class UpdateBingoCommand extends Command<Bingo> {
     width?: number;
     height?: number;
     fullLineValue?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
   };
   constructor({ bingoId, requester, updates }: UpdateBingoParams) {
     super();
@@ -90,13 +90,9 @@ export class UpdateBingoHandler {
 
     const updates = Object.fromEntries(
       Object.entries(command.updates).filter(([key, value]) => {
-        const current = bingo![key];
+        const current = bingo![key as keyof Bingo];
 
         if (value === undefined) return false;
-
-        if (value instanceof Date && current instanceof Date) {
-          return value.getTime() !== current.getTime();
-        }
 
         return value !== current;
       }),
@@ -106,33 +102,7 @@ export class UpdateBingoHandler {
       return bingo;
     }
 
-    if (updates.description) {
-      bingo.description = updates.description;
-    }
-
-    if (updates.startDate) {
-      bingo.startDate = updates.startDate;
-    }
-
-    if (updates.endDate) {
-      bingo.endDate = updates.endDate;
-    }
-
-    if (updates.language) {
-      bingo.language = updates.language;
-    }
-
-    if (updates.private !== undefined) {
-      bingo.private = updates.private;
-    }
-
-    if (updates.title) {
-      bingo.title = updates.title;
-    }
-
-    if (updates.fullLineValue) {
-      bingo.fullLineValue = updates.fullLineValue;
-    }
+    Object.assign(bingo, updates);
 
     this.eventBus.publish(
       new BingoUpdatedEvent({

@@ -30,11 +30,11 @@ export class Bingo extends StrongEntityParanoid {
   @Column()
   fullLineValue: number;
 
-  @Column({ type: 'timestamptz' })
-  startDate: Date;
+  @Column({ type: 'date' })
+  startDate: string;
 
-  @Column({ type: 'timestamptz' })
-  endDate: Date;
+  @Column({ type: 'date' })
+  endDate: string;
 
   @ManyToOne(() => User, { nullable: true, lazy: true })
   @JoinColumn({ name: 'created_by' })
@@ -78,6 +78,6 @@ export class Bingo extends StrongEntityParanoid {
   @JoinColumn({ name: 'deleted_by' })
   deletedBy: Promise<User>;
 
-  @Column({ type: 'timestamptz', nullable: true })
-  maxRegistrationDate: Date;
+  @Column({ type: 'date', nullable: true })
+  maxRegistrationDate: string;
 }

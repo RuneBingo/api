@@ -12,8 +12,8 @@ export type BingoCreatedParams = {
   width: number;
   height: number;
   fullLineValue: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 };
 
 export class BingoCreatedEvent {

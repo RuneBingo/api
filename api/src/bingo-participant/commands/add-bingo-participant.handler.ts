@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 import { AddBingoParticipantCommand, AddBingoParticipantResult } from './add-bingo-participant.command';
 import { BingoParticipant } from '../bingo-participant.entity';
-import { BingoRoles } from '../roles/bingo-roles.constants';
 
 @CommandHandler(AddBingoParticipantCommand)
 export class AddBingoParticipantHandler {

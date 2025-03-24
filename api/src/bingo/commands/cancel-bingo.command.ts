@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { Roles } from '@/auth/roles/roles.constants';
 import { userHasRole } from '@/auth/roles/roles.utils';
 import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
+import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
+import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
 import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
@@ -57,7 +59,7 @@ export class CancelBingoHandler {
 
     const requesterIsModerator = userHasRole(requester, Roles.Moderator);
 
-    if (!requesterIsModerator && (!participant || (participant.role !== 'owner' && participant.role !== 'organizer'))) {
+    if (!requesterIsModerator && (!participant || !userHasBingoRole(participant, BingoRoles.Organizer))) {
       throw new UnauthorizedException(this.i18nService.t('bingo.deleteBingo.notAuthorized'));
     }
 

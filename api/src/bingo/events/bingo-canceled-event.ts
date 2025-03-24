@@ -1,5 +1,6 @@
-import { CreateActivityCommand } from '@/activity/commands/create-activity.command';
 import { CommandBus, EventsHandler } from '@nestjs/cqrs';
+
+import { CreateActivityCommand } from '@/activity/commands/create-activity.command';
 
 export type BingoCanceledParams = {
   bingoId: number;
@@ -14,7 +15,7 @@ export class BingoCanceledEvent {
     this.bingoId = bingoId;
     this.requesterId = requesterId;
   }
-} 
+}
 
 @EventsHandler(BingoCanceledEvent)
 export class BingoCanceledHandler {

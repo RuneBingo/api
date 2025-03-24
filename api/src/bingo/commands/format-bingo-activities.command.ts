@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Command, CommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -8,8 +9,8 @@ import { ActivityDto } from '@/activity/dto/activity.dto';
 import { I18nTranslations } from '@/i18n/types';
 import { UserDto } from '@/user/dto/user.dto';
 import { User } from '@/user/user.entity';
+
 import { Bingo } from '../bingo.entity';
-import { Logger, NotFoundException } from '@nestjs/common';
 
 export type FormatBingoActivitiesResult = ActivityDto[];
 
@@ -37,9 +38,7 @@ export class FormatBingoActivitiesHandler {
     await this.preloadUsers(command.activities);
 
     const activitiesDto = await Promise.all(
-      activities.map(async (activity) => {
-        const userId = activity.createdById;
-        const userDto = userId ? (this.usersMap.get(userId) ?? null) : null;
+      activities.map((activity) => {
         switch (activity.key) {
           case 'bingo.created':
             return this.formatBingoCreatedActivity(activity);
@@ -59,7 +58,7 @@ export class FormatBingoActivitiesHandler {
     return activitiesDto.filter(Boolean) as ActivityDto[];
   }
 
-  private async formatBingoCreatedActivity(activity: Activity): Promise<ActivityDto> {
+  private formatBingoCreatedActivity(activity: Activity): ActivityDto {
     const requester = activity.createdById ? this.usersMap.get(activity.createdById) : null;
     const requesterName = requester?.username ?? 'System';
     const title = this.i18nService.t('bingo.activity.created.title', {
@@ -69,7 +68,7 @@ export class FormatBingoActivitiesHandler {
     return new ActivityDto(requester ?? null, activity.createdAt, activity.key, title);
   }
 
-  private async formatBingoUpdatedActivity(activity: Activity): Promise<ActivityDto> {
+  private formatBingoUpdatedActivity(activity: Activity): ActivityDto {
     const requester = activity.createdById ? this.usersMap.get(activity.createdById) : null;
     const requesterName = requester?.username ?? 'System';
     const title = this.i18nService.t('bingo.activity.updated.title', {
@@ -118,7 +117,7 @@ export class FormatBingoActivitiesHandler {
     return new ActivityDto(requester ?? null, activity.createdAt, activity.key, title, body);
   }
 
-  private async formatBingoDeletedActivity(activity: Activity): Promise<ActivityDto> {
+  private formatBingoDeletedActivity(activity: Activity): ActivityDto {
     const requester = activity.createdById ? this.usersMap.get(activity.createdById) : null;
     const requesterName = requester?.username ?? 'System';
     const title = this.i18nService.t('bingo.activity.deleted.title', {
@@ -128,7 +127,7 @@ export class FormatBingoActivitiesHandler {
     return new ActivityDto(requester ?? null, activity.createdAt, activity.key, title);
   }
 
-  private async formatBingoCanceledActivity(activity: Activity): Promise<ActivityDto> {
+  private formatBingoCanceledActivity(activity: Activity): ActivityDto {
     const requester = activity.createdById ? this.usersMap.get(activity.createdById) : null;
     const requesterName = requester?.username ?? 'System';
     const title = this.i18nService.t('bingo.activity.canceled.title', {
