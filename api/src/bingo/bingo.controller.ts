@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -59,7 +60,7 @@ export class BingoController {
     await this.commandBus.execute(
       new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: BingoRoles.Owner }),
     );
-    const createdBy = await bingo.createdBy;
+    const createdBy = new UserDto(await bingo.createdBy);
     return new BingoDto(bingo, {createdBy});
   }
 
@@ -81,7 +82,7 @@ export class BingoController {
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingosQuery(params));
 
-    const bingosDto = items.map((bingo) => new BingoDto(bingo));
+    const bingosDto = await Promise.all(items.map(async (bingo) => new BingoDto(bingo, {createdBy: new UserDto(await bingo.createdBy)})));
 
     return new PaginatedBingosDto({ items: bingosDto, ...pagination });
   }
@@ -93,12 +94,8 @@ export class BingoController {
   async findById(@Param('id') id: number, @Req() req: Request): Promise<BingoDto> {
     const params: GetBingoByIdParams = { bingoId: id, requester: req.userEntity! };
     const bingo = await this.queryBus.execute(new GetBingoByIdQuery(params));
-    const createdBy = new UserDto(await bingo.createdBy);
-    const canceledBy = new UserDto(await bingo.canceledBy);
-    return new BingoDto(bingo, {
-      createdBy,
-      canceledBy,
-    });
+
+    return new BingoDto(bingo);
   }
 
   @Put(':id')
@@ -120,7 +117,7 @@ export class BingoController {
           language: body.language,
           title: body.title,
           description: body.description,
-          isPrivate: body.private,
+          private: body.private,
           fullLineValue: body.fullLineValue,
           startDate: body.startDate,
           endDate: body.endDate,
@@ -155,20 +152,20 @@ export class BingoController {
     } satisfies SearchBingoActivitiesParams;
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingoActivitiesQuery(params));
+    console.log("Activities:", items);
     const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items));
     return new PaginatedActivitiesDto({ items: itemsDto, ...pagination });
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
+  @HttpCode(204)
   @ApiOperation({ summary: 'Delete a bingo event' })
-  @ApiOkResponse({ description: 'The bingo event has been successfully deleted.' })
+  @ApiNoContentResponse({ description: 'The bingo event has been successfully deleted.' })
   @ApiNotFoundResponse({ description: 'No bingo with provided Id was found.' })
   @ApiUnauthorizedResponse({ description: 'Not authorized to delete the bingo event.' })
   async delete(@Req() req: Request, @Param('id') bingoId: number) {
-    const bingo = await this.commandBus.execute(new DeleteBingoCommand({ requester: req.userEntity!, bingoId }));
-    const deletedBy = new UserDto(await bingo.deletedBy);
-    return new BingoDto(bingo, { deletedBy });
+    await this.commandBus.execute(new DeleteBingoCommand({ requester: req.userEntity!, bingoId }));
   }
 
   @Post(':id/cancel')

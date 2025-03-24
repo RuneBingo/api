@@ -45,11 +45,36 @@ export type I18nTranslations = {
         "searchBingoActivities": {
             "bingoNotFound": string;
         };
+        "getBingoById": {
+            "bingoNotFound": string;
+        };
+        "activity": {
+            "created": {
+                "title": string;
+            };
+            "updated": {
+                "title": string;
+                "body": {
+                    "language": string;
+                    "title": string;
+                    "description": string;
+                    "private": string;
+                    "width": string;
+                    "height": string;
+                    "fullLineValue": string;
+                    "startDate": string;
+                    "endDate": string;
+                };
+            };
+            "deleted": {
+                "title": string;
+            };
+            "canceled": {
+                "title": string;
+            };
+        };
         "formatBingoActivities": {
             "title": string;
-        };
-        "activityActions": {
-            "created": string;
         };
     };
     "email": {

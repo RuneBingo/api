@@ -1,8 +1,8 @@
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { Command, CommandHandler, QueryBus } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Command, CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { Roles } from '@/auth/roles/roles.constants';
 import { userHasRole } from '@/auth/roles/roles.utils';
@@ -13,6 +13,8 @@ import { User } from '@/user/user.entity';
 import { Bingo } from '../bingo.entity';
 import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
 import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
+import { BingoDeletedEvent } from '../events/bingo-deleted-event';
 
 export type DeleteBingoParams = {
   requester: User;
@@ -32,8 +34,11 @@ export class DeleteBingoHandler {
   constructor(
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     private readonly i18nService: I18nService<I18nTranslations>,
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: DeleteBingoCommand): Promise<DeleteBingoResult> {
@@ -57,9 +62,36 @@ export class DeleteBingoHandler {
       throw new UnauthorizedException(this.i18nService.t('bingo.deleteBingo.notAuthorized'));
     }
 
-    bingo.deletedAt = new Date();
-    bingo.deletedById = requester.id;
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    return await this.bingoRepository.save(bingo);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update('bingo_participant')
+        .set({
+          deletedAt: () => 'CURRENT_TIMESTAMP',
+          deletedById: requester.id,
+        })
+        .where('bingoId = :bingoId', { bingoId })
+        .execute();
+
+      bingo.deletedAt = new Date();
+      bingo.deletedById = requester.id;
+
+      await queryRunner.manager.save(bingo);
+      await queryRunner.commitTransaction();
+
+      this.eventBus.publish(new BingoDeletedEvent({ bingoId, requesterId: requester.id }));
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    return bingo;
   }
 }

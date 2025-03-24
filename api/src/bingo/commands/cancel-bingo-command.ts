@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { Command, CommandHandler, QueryBus } from '@nestjs/cqrs';
+import { Command, CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { BingoCanceledEvent } from '../events/bingo-canceled-event';
 
 export type CancelBingoParams = {
   requester: User;
@@ -32,6 +33,7 @@ export class CancelBingoHandler {
     private readonly bingoRepository: Repository<Bingo>,
     private readonly i18nService: I18nService<I18nTranslations>,
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: CancelBingoCommand): Promise<Bingo> {
@@ -61,8 +63,11 @@ export class CancelBingoHandler {
 
     bingo.canceledAt = new Date();
     bingo.canceledById = requester.id;
+    bingo.canceledBy = Promise.resolve(requester);
 
     const canceledBingo = await this.bingoRepository.save(bingo);
+
+    this.eventBus.publish(new BingoCanceledEvent({ bingoId, requesterId: requester.id }));
 
     return canceledBingo;
   }

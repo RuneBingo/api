@@ -83,6 +83,7 @@ export class CreateBingoHandler {
     bingo.startDate = startDate;
     bingo.endDate = endDate;
     bingo.createdById = command.requester.id;
+    bingo.createdBy = Promise.resolve(requester);
     await this.bingoRepository.save(bingo);
 
     this.eventBus.publish(

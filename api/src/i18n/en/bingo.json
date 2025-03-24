@@ -19,10 +19,33 @@
     "searchBingoActivities": {
         "bingoNotFound": "No bingo with this id was found."
     },
-    "formatBingoActivities":{
-        "title": "Bingo {action} by {username}."
+    "getBingoById": {
+        "bingoNotFound": "No bingo with this id was found."
     },
-    "activityActions": {
-        "created": "created"
+    "activity": {
+        "created": {
+            "title": "{username} has created the bingo."
+        },
+        "updated": {
+            "title": "{username} has updated the bingo.",
+            "body":{
+                "language": "Set the language to {language}.",
+                "title": "Set the title to {title}.",
+                "description": "Set the description to {description}.",
+                "private": "Set the private to {private}.",
+                "width": "Set the width to {width}.",
+                "height": "Set the height to {height}.",
+                "fullLineValue": "Set the full line value to {fullLineValue}.",
+                "startDate": "Set the start date to {startDate}.",
+                "endDate": "Set the end date to {endDate}."
+            }
+        },
+        "deleted": {
+            "title": "{username} has deleted the bingo."
+        },
+        "canceled": {
+            "title": "{username} has canceled the bingo."
+        }
     }
+    
 }

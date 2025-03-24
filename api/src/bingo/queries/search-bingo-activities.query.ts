@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Query, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 import { Activity } from '@/activity/activity.entity';
 import { type PaginatedDtoWithoutTotal } from '@/db/dto/paginated.dto';
@@ -46,18 +46,13 @@ export class SearchBingoActivitiesHandler {
 
     const q = this.activityRepository
       .createQueryBuilder('activity')
-      .where('activity.trackable_type = :type', { type: 'Bingo' })
-      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = activity.trackable_id')
-      .andWhere('activity.trackable_id = :id', { id: bingo.id })
-      .andWhere(
-        '((bingoParticipant.id = :requester_id AND bingoParticipant.role IN (:...bingoRoles)) OR :requesterRole IN (:...userRoles))',
-        {
-          requester_id: requester.id,
-          bingoRoles: ['owner', 'organizer'],
-          userRoles: ['admin', 'moderator'],
-          requesterRole: requester.role,
-        },
-      )
+      .innerJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = activity.trackable_id')
+      .innerJoin('user', 'user', 'user.id = bingoParticipant.user_id')
+      .where('activity.trackable_id = :trackableId', { trackableId: bingoId })
+      .andWhere('(bingoParticipant.role IN (:...bingoRoles) OR user.role IN (:...roles))', {
+        roles: ['admin', 'moderator'],
+        bingoRoles: ['organizer', 'owner']
+      })
       .orderBy('activity.createdAt', 'DESC');
 
     return resolvePaginatedQueryWithoutTotal(q, pagination);

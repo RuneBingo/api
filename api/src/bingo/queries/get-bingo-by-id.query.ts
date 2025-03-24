@@ -52,7 +52,7 @@ export class GetBingoByIdHandler {
     }
     const bingo = await q.getOne();
     if (!bingo) {
-      throw new NotFoundException();
+      throw new NotFoundException(this.i18nService.t('bingo.findById.notFound'));
     }
 
     return bingo;

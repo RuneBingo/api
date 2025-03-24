@@ -18,6 +18,9 @@ import { BingoCreatedHandler } from './events/bingo-created.event';
 import { GetBingoByIdHandler } from './queries/get-bingo-by-id.query';
 import { SearchBingoActivitiesHandler } from './queries/search-bingo-activities.query';
 import { SearchBingosHandler } from './queries/search-bingos.query';
+import { BingoUpdatedHandler } from './events/bingo-updated-event';
+import { BingoDeletedHandler } from './events/bingo-deleted-event';
+import { BingoCanceledEvent, BingoCanceledHandler } from './events/bingo-canceled-event';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Bingo, User, Activity, BingoParticipant])],
@@ -39,6 +42,9 @@ import { SearchBingosHandler } from './queries/search-bingos.query';
 
     //Events
     BingoCreatedHandler,
+    BingoUpdatedHandler,
+    BingoDeletedHandler,
+    BingoCanceledHandler
   ],
 })
 export class BingoModule {}

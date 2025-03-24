@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { Command, QueryBus, CommandHandler } from '@nestjs/cqrs';
+import { Command, QueryBus, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { BingoUpdatedEvent } from '../events/bingo-updated-event';
 
 export type UpdateBingoParams = {
   bingoId: number;
@@ -19,7 +20,7 @@ export type UpdateBingoParams = {
     language?: string;
     title?: string;
     description?: string;
-    isPrivate?: boolean;
+    private?: boolean;
     width?: number;
     height?: number;
     fullLineValue?: number;
@@ -37,7 +38,7 @@ export class UpdateBingoCommand extends Command<Bingo> {
     language?: string;
     title?: string;
     description?: string;
-    isPrivate?: boolean;
+    private?: boolean;
     width?: number;
     height?: number;
     fullLineValue?: number;
@@ -59,6 +60,7 @@ export class UpdateBingoHandler {
     private readonly bingoRepository: Repository<Bingo>,
     private readonly i18nService: I18nService<I18nTranslations>,
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: UpdateBingoCommand): Promise<UpdateBingoResult> {
@@ -87,8 +89,22 @@ export class UpdateBingoHandler {
     }
 
     const updates = Object.fromEntries(
-      Object.entries(command.updates).filter(([key, value]) => value !== undefined && value !== bingo![key]),
+      Object.entries(command.updates).filter(([key, value]) => {
+        const current = bingo![key];
+
+        if (value === undefined) return false;
+
+        if (value instanceof Date && current instanceof Date) {
+          return value.getTime() !== current.getTime();
+        }
+
+        return value !== current;
+      }),
     ) as UpdateBingoParams['updates'];
+
+    if (Object.keys(updates).length === 0) {
+      return bingo;
+    }
 
     if (updates.description) {
       bingo.description = updates.description;
@@ -106,8 +122,8 @@ export class UpdateBingoHandler {
       bingo.language = updates.language;
     }
 
-    if (updates.isPrivate) {
-      bingo.private = updates.isPrivate;
+    if (updates.private !== undefined) {
+      bingo.private = updates.private;
     }
 
     if (updates.title) {
@@ -117,6 +133,17 @@ export class UpdateBingoHandler {
     if (updates.fullLineValue) {
       bingo.fullLineValue = updates.fullLineValue;
     }
+
+    this.eventBus.publish(
+      new BingoUpdatedEvent({
+        bingoId: bingoId,
+        requesterId: command.requester.id,
+        updates,
+      }),
+    );
+
+    bingo.updatedById = requester.id;
+    bingo.updatedBy = Promise.resolve(requester);
 
     bingo = await this.bingoRepository.save(bingo);
 

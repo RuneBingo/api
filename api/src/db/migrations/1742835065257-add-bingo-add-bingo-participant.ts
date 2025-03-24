@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddBingoAddBingoParticipant1742827509270 implements MigrationInterface {
-    name = 'AddBingoAddBingoParticipant1742827509270'
+export class AddBingoAddBingoParticipant1742835065257 implements MigrationInterface {
+    name = 'AddBingoAddBingoParticipant1742835065257'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "session" DROP CONSTRAINT "FK_3d2f174ef04fb312fdebd0ddc53"`);
@@ -10,7 +10,9 @@ export class AddBingoAddBingoParticipant1742827509270 implements MigrationInterf
         await queryRunner.query(`CREATE TABLE "bingo" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "created_by" integer, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_by" integer, "deleted_at" TIMESTAMP WITH TIME ZONE, "deleted_by" integer, "uuid" uuid NOT NULL DEFAULT uuid_generate_v4(), "language" character varying NOT NULL DEFAULT 'en', "title" character varying NOT NULL, "description" character varying NOT NULL, "private" boolean NOT NULL, "width" integer NOT NULL DEFAULT '5', "height" integer NOT NULL DEFAULT '5', "full_line_value" integer NOT NULL, "start_date" TIMESTAMP WITH TIME ZONE NOT NULL, "end_date" TIMESTAMP WITH TIME ZONE NOT NULL, "started_at" TIMESTAMP WITH TIME ZONE, "started_by" integer, "ended_at" TIMESTAMP WITH TIME ZONE, "ended_by" integer, "canceled_at" TIMESTAMP WITH TIME ZONE, "canceled_by" integer, "max_registration_date" TIMESTAMP WITH TIME ZONE, CONSTRAINT "UQ_f60383e8ca8d750a8bf7a45f7b6" UNIQUE ("uuid"), CONSTRAINT "PK_852d0aee265c4f8df4d04873f21" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_6aa272dc908ff1a20a3f38d2ce" ON "bingo" ("deleted_at") WHERE "deleted_at" IS NOT NULL`);
         await queryRunner.query(`CREATE INDEX "IDX_ef43e9b55583c5a8c26b0e7d84" ON "bingo" ("deleted_at") WHERE "deleted_at" IS NULL`);
-        await queryRunner.query(`CREATE TABLE "bingo_participant" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "created_by" integer, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_by" integer, "user_id" integer NOT NULL, "bingo_id" integer NOT NULL, "role" character varying NOT NULL DEFAULT 'participant', "team_id" integer, CONSTRAINT "PK_b70732448e1bfe39415b2d204bc" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "bingo_participant" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "created_by" integer, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_by" integer, "deleted_at" TIMESTAMP WITH TIME ZONE, "deleted_by" integer, "user_id" integer NOT NULL, "bingo_id" integer NOT NULL, "role" character varying NOT NULL DEFAULT 'participant', "team_id" integer, CONSTRAINT "PK_b70732448e1bfe39415b2d204bc" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_a58d3b32bd780fb8ecb31f34e9" ON "bingo_participant" ("deleted_at") WHERE "deleted_at" IS NOT NULL`);
+        await queryRunner.query(`CREATE INDEX "IDX_019a81ca6d8d79f09f58e5c030" ON "bingo_participant" ("deleted_at") WHERE "deleted_at" IS NULL`);
         await queryRunner.query(`ALTER TABLE "session" DROP COLUMN "userId"`);
         await queryRunner.query(`CREATE INDEX "IDX_52f62a9a442b3e45f942f1ff0c" ON "user" ("deleted_at") WHERE "deleted_at" IS NOT NULL`);
         await queryRunner.query(`CREATE INDEX "IDX_f15a1e032b752248437bd1e17b" ON "user" ("deleted_at") WHERE "deleted_at" IS NULL`);
@@ -34,6 +36,8 @@ export class AddBingoAddBingoParticipant1742827509270 implements MigrationInterf
         await queryRunner.query(`DROP INDEX "public"."IDX_f15a1e032b752248437bd1e17b"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_52f62a9a442b3e45f942f1ff0c"`);
         await queryRunner.query(`ALTER TABLE "session" ADD "userId" integer`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_019a81ca6d8d79f09f58e5c030"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a58d3b32bd780fb8ecb31f34e9"`);
         await queryRunner.query(`DROP TABLE "bingo_participant"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_ef43e9b55583c5a8c26b0e7d84"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_6aa272dc908ff1a20a3f38d2ce"`);

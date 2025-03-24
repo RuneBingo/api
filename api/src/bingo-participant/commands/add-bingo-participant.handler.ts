@@ -21,8 +21,6 @@ export class AddBingoParticipantHandler {
     bingoParticipant.bingoId = bingo.id;
     bingoParticipant.role = role;
 
-    console.log(BingoRoles[role]);
-
     await this.bingoParticipantRepository.save(bingoParticipant);
 
     return bingoParticipant;

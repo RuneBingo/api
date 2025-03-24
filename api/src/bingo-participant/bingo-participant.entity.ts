@@ -1,12 +1,12 @@
 import { Column, Entity, JoinColumn, ManyToMany } from 'typeorm';
 
 import { Bingo } from '@/bingo/bingo.entity';
-import { StrongEntity } from '@/db/base.entity';
+import { StrongEntityParanoid } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
 import { BingoRoles } from './roles/bingo-roles.constants';
 
 @Entity()
-export class BingoParticipant extends StrongEntity {
+export class BingoParticipant extends StrongEntityParanoid {
   @Column({ name: 'user_id', type: 'int', nullable: false })
   userId: number;
 

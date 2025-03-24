@@ -5,15 +5,15 @@
     "updateBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
         "bingoNotPending": "L'évènement de bingo est déjà commencé.",
-        "notAuthorized": "Vous n'êtes pas autorisé à modifier ce bingo."
+        "notAuthorized": "Vous n'êtes pas auàrisé à modifier ce bingo."
     },
     "deleteBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
-        "notAuthorized": "Vous n'êtes pas autorisé à modifier ce bingo."
+        "notAuthorized": "Vous n'êtes pas auàrisé à modifier ce bingo."
     },
     "cancelBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
-        "notAuthorized": "Vous n'êtes pas autorisé à annuler ce bingo.",
+        "notAuthorized": "Vous n'êtes pas auàrisé à annuler ce bingo.",
         "alreadyEndedOrCanceled": "Le bingo est déjà annulé ou fini."
     },
     "searchBingoActivities": {
@@ -22,7 +22,32 @@
     "formatBingoActivities":{
         "title": "Bingo {action} par {username}."
     },
-    "activityActions": {
-        "created": "créé"
+    "getBingoById": {
+        "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé."
+    },
+    "activity": {
+        "created": {
+            "title": "{username} a créé le bingo."
+        },
+        "updated": {
+            "title": "{username} a mis à jour le bingo.",
+            "body":{
+                "language": "A mis à jour le langage à {language}.",
+                "title": "A mis à jour le titre à {title}.",
+                "description": "A mis à jour la description à {description}.",
+                "private": "A mis à jour la confidentialité à {private}.",
+                "width": "A mis à jour la largeur à {width}.",
+                "height": "A mis à jour la hauteur à {height}.",
+                "fullLineValue": "A mis à jour la valeur de ligne complète à {fullLineValue}.",
+                "startDate": "A mis à jour la date de début au {startDate}.",
+                "endDate": "A mis à jour le date de fin au {endDate}."
+            }
+        },
+        "deleted": {
+            "title": "{username} a supprimé le bingo."
+        },
+        "canceled": {
+            "title": "{username} a annulé le bingo."
+        }
     }
 }
