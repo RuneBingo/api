@@ -11,7 +11,7 @@ import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
-import { BingoUpdatedEvent } from '../events/bingo-updated-event';
+import { BingoUpdatedEvent } from '../events/bingo-updated.event';
 
 export type UpdateBingoParams = {
   bingoId: number;

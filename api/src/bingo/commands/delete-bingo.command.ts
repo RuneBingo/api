@@ -13,7 +13,7 @@ import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
-import { BingoDeletedEvent } from '../events/bingo-deleted-event';
+import { BingoDeletedEvent } from '../events/bingo-deleted.event';
 
 export type DeleteBingoParams = {
   requester: User;
