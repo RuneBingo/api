@@ -11,6 +11,8 @@ import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
+import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
 
 export type DeleteBingoParams = {
   requester: User;
@@ -51,15 +53,13 @@ export class DeleteBingoHandler {
 
     const requesterIsModerator = userHasRole(requester, Roles.Moderator);
 
-    if (!requesterIsModerator && (!participant || participant.role !== 'owner')) {
+    if (!requesterIsModerator && (!participant || !userHasBingoRole(participant, BingoRoles.Owner))) {
       throw new UnauthorizedException(this.i18nService.t('bingo.deleteBingo.notAuthorized'));
     }
 
     bingo.deletedAt = new Date();
     bingo.deletedById = requester.id;
 
-    const deletedBingo = await this.bingoRepository.save(bingo);
-
-    return deletedBingo;
+    return await this.bingoRepository.save(bingo);
   }
 }

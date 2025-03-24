@@ -27,6 +27,7 @@ import { UpdateBingoDto } from './dto/update-bingo.dto';
 import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
+import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -56,9 +57,10 @@ export class BingoController {
       }),
     );
     await this.commandBus.execute(
-      new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: 'owner' }),
+      new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: BingoRoles.Owner }),
     );
-    return new BingoDto(bingo);
+    const createdBy = await bingo.createdBy;
+    return new BingoDto(bingo, {createdBy});
   }
 
   @Get()

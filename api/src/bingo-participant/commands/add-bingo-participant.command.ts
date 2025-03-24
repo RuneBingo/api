@@ -4,11 +4,12 @@ import { type Bingo } from '@/bingo/bingo.entity';
 import { type User } from '@/user/user.entity';
 
 import { type BingoParticipant } from '../bingo-participant.entity';
+import { BingoRoles } from '../roles/bingo-roles.constants';
 
 export type AddBingoParticipantParams = {
   bingo: Bingo;
   user: User;
-  role: string;
+  role: BingoRoles;
 };
 
 export type AddBingoParticipantResult = BingoParticipant;

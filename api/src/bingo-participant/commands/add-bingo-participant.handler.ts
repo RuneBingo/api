@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { AddBingoParticipantCommand, AddBingoParticipantResult } from './add-bingo-participant.command';
 import { BingoParticipant } from '../bingo-participant.entity';
+import { BingoRoles } from '../roles/bingo-roles.constants';
 
 @CommandHandler(AddBingoParticipantCommand)
 export class AddBingoParticipantHandler {
@@ -19,6 +20,8 @@ export class AddBingoParticipantHandler {
     bingoParticipant.userId = user.id;
     bingoParticipant.bingoId = bingo.id;
     bingoParticipant.role = role;
+
+    console.log(BingoRoles[role]);
 
     await this.bingoParticipantRepository.save(bingoParticipant);
 
