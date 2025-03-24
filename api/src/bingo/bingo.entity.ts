@@ -1,10 +1,10 @@
 import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
 
-import { StrongEntity } from '@/db/base.entity';
+import { StrongEntity, StrongEntityParanoid } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
 
 @Entity()
-export class Bingo extends StrongEntity {
+export class Bingo extends StrongEntityParanoid {
   @Column({ unique: true, type: 'uuid' })
   @Generated('uuid')
   uuid: string;
@@ -73,4 +73,11 @@ export class Bingo extends StrongEntity {
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'canceled_by' })
   canceledBy: Promise<User>;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({name: 'deleted_by'})
+  deletedBy: Promise<User>
+
+  @Column({type: 'timestamptz', nullable: true})
+  maxRegistrationDate: Date;
 }

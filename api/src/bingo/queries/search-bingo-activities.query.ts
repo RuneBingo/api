@@ -42,7 +42,6 @@ export class SearchBingoActivitiesHandler {
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.searchBingoActivities.bingoNotFound'));
     }
-    console.log(requester.role);
 
     const q = this.activityRepository
       .createQueryBuilder('activity')

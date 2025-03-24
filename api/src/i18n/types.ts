@@ -33,8 +33,23 @@ export type I18nTranslations = {
             "bingoNotPending": string;
             "notAuthorized": string;
         };
+        "deleteBingo": {
+            "bingoNotFound": string;
+            "notAuthorized": string;
+        };
+        "cancelBingo": {
+            "bingoNotFound": string;
+            "notAuthorized": string;
+            "alreadyEndedOrCanceled": string;
+        };
         "searchBingoActivities": {
             "bingoNotFound": string;
+        };
+        "formatBingoActivities": {
+            "title": string;
+        };
+        "activityActions": {
+            "created": string;
         };
     };
     "email": {

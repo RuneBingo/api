@@ -72,7 +72,6 @@ export class UpdateBingoHandler {
 
     let bingo = await this.bingoRepository.findOneBy({ id: bingoId });
 
-    const requesterIsModerator = userHasRole(requester, Roles.Moderator);
 
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.updateBingo.bingoNotFound'));
@@ -83,6 +82,8 @@ export class UpdateBingoHandler {
     const participant = bingoParticipants.find((participant) => {
       return participant.userId === requester.id;
     });
+
+    const requesterIsModerator = userHasRole(requester, Roles.Moderator);
 
     if (!requesterIsModerator && !participant) {
       throw new UnauthorizedException(this.i18nService.t('bingo.updateBingo.notAuthorized'));

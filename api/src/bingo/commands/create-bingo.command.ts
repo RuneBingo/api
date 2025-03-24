@@ -23,7 +23,7 @@ export type CreateBingoParams = {
 
 export type CreateBingoResult = Bingo;
 
-export class CreateBingoCommand extends Command<Bingo> {
+export class CreateBingoCommand extends Command<CreateBingoResult> {
   public readonly requester: User;
   public readonly language: string;
   public readonly title: string;

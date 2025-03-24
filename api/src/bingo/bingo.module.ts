@@ -16,6 +16,8 @@ import { BingoCreatedHandler } from './events/bingo-created.event';
 import { AddBingoParticipantHandler } from '@/bingo-participant/commands/add-bingo-participant.handler';
 import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { GetBingoParticipantsHandler } from '@/bingo-participant/queries/get-bingo-participants.handler';
+import { DeleteBingoHandler } from './commands/delete-bingo-command';
+import { CancelBingoHandler } from './commands/cancel-bingo-command';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Bingo, User, Activity, BingoParticipant])],
@@ -24,8 +26,10 @@ import { GetBingoParticipantsHandler } from '@/bingo-participant/queries/get-bin
     //Commands
     CreateBingoHandler,
     UpdateBingoHandler,
+    DeleteBingoHandler,
     FormatBingoActivitiesHandler,
     AddBingoParticipantHandler,
+    CancelBingoHandler,
 
     //Queries
     GetBingoByIdHandler,

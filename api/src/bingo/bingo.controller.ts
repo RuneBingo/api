@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -12,7 +13,16 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOkResponse, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { AuthGuard } from '@/auth/guards/auth.guard';
 import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
@@ -28,6 +38,9 @@ import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
 import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
+import { DeleteBingoCommand } from './commands/delete-bingo-command';
+import { UserDto } from '@/user/dto/user.dto';
+import { CancelBingoCommand } from './commands/cancel-bingo-command';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -39,11 +52,11 @@ export class BingoController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create a new bingo event' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'The bingo event has been created', type: BingoDto })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'The input values are invalid' })
+  @ApiCreatedResponse({ description: 'The bingo event has been created.', type: BingoDto })
+  @ApiBadRequestResponse({ description: 'The input values are invalid.' })
   async create(@Body(new ValidationPipe()) body: CreateBingoDto, @Req() req: Request): Promise<BingoDto> {
     const bingo = await this.commandBus.execute(
-      new CreateBingoCommand({ 
+      new CreateBingoCommand({
         requester: req.userEntity!,
         language: body.language,
         title: body.title,
@@ -54,7 +67,7 @@ export class BingoController {
         fullLineValue: body.fullLineValue,
         startDate: body.startDate,
         endDate: body.endDate,
-       }),
+      }),
     );
     await this.commandBus.execute(
       new AddBingoParticipantCommand({ user: req.userEntity!, bingo: bingo, role: 'owner' }),
@@ -64,7 +77,7 @@ export class BingoController {
 
   @Get()
   @ApiOperation({ summary: 'Get bingos paginated list of bingos' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Here are the bingos' })
+  @ApiOkResponse({ description: 'Here are the bingos.' })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
   async getBingos(
@@ -80,36 +93,41 @@ export class BingoController {
 
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingosQuery(params));
 
-    const bingosDto = await Promise.all(items.map(async (bingo) => await BingoDto.fromBingo(bingo)));
+    const bingosDto = items.map((bingo) => new BingoDto(bingo));
 
     return new PaginatedBingosDto({ items: bingosDto, ...pagination });
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Find a bingo by its id' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'The bingo has been found', type: BingoDto })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'The bingo does not exist' })
+  @ApiOkResponse({ description: 'The bingo has been found.', type: BingoDto })
+  @ApiNotFoundResponse({ description: 'The bingo does not exist.' })
   async findById(@Param('id') id: number, @Req() req: Request): Promise<BingoDto> {
     const params: GetBingoByIdParams = { bingoId: id, requester: req.userEntity! };
     const bingo = await this.queryBus.execute(new GetBingoByIdQuery(params));
-    return await BingoDto.fromBingo(bingo);
+    const createdBy = new UserDto(await bingo.createdBy);
+    const canceledBy = new UserDto(await bingo.canceledBy)
+    return new BingoDto(bingo, {
+      createdBy,
+      canceledBy
+    });
   }
 
   @Put(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update a bingo event' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'The bingo has been updated', type: BingoDto })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid request parameters' })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized to modify this bingo event' })
+  @ApiOkResponse({ description: 'The bingo has been updated.', type: BingoDto })
+  @ApiBadRequestResponse({ description: 'Invalid request parameters.' })
+  @ApiUnauthorizedResponse({ description: 'Not authorized to modify this bingo event.' })
   async update(
     @Req() req: Request,
     @Param('id') id: number,
     @Body(new ValidationPipe()) body: UpdateBingoDto,
   ): Promise<BingoDto> {
     const bingo = await this.commandBus.execute(
-      new UpdateBingoCommand({ 
-        requester: req.userEntity!, 
-        bingoId: id, 
+      new UpdateBingoCommand({
+        requester: req.userEntity!,
+        bingoId: id,
         updates: {
           language: body.language,
           title: body.title,
@@ -118,7 +136,8 @@ export class BingoController {
           fullLineValue: body.fullLineValue,
           startDate: body.startDate,
           endDate: body.endDate,
-      } }),
+        },
+      }),
     );
 
     return new BingoDto(bingo);
@@ -127,8 +146,11 @@ export class BingoController {
   @Get(':id/activities')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get paginated list of bingo activities' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Sucessful query of bingo activities', type: PaginatedActivitiesDto })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No bingo with ID provided was found' })
+  @ApiOkResponse({
+    description: 'Sucessful query of bingo activities.',
+    type: PaginatedActivitiesDto,
+  })
+  @ApiNotFoundResponse({ description: 'No bingo with provided Id was found.' })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
   async getActivities(
@@ -147,5 +169,31 @@ export class BingoController {
     const { items, ...pagination } = await this.queryBus.execute(new SearchBingoActivitiesQuery(params));
     const itemsDto = await this.commandBus.execute(new FormatBingoActivitiesCommand(items));
     return new PaginatedActivitiesDto({ items: itemsDto, ...pagination });
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiOperation({summary: 'Delete a bingo event'})
+  @ApiOkResponse({ description: 'The bingo event has been successfully deleted.' })
+  @ApiNotFoundResponse({ description: 'No bingo with provided Id was found.' })
+  @ApiUnauthorizedResponse({ description: 'Not authorized to delete the bingo event.' })
+  async delete(@Req() req: Request, @Param('id') bingoId: number) {
+    const bingo = await this.commandBus.execute(new DeleteBingoCommand({ requester: req.userEntity!, bingoId }));
+    const deletedBy = new UserDto(await bingo.deletedBy);
+    return new BingoDto(bingo, { deletedBy });
+  }
+
+  @Post(':id/cancel')
+  @UseGuards(AuthGuard)
+  @ApiOperation({summary: 'Cancel a bingo event'})
+  @ApiOkResponse({ description: 'The bingo event has been successfully cancelled.' })
+  @ApiNotFoundResponse({ description: 'No bingo with provided Id was found.' })
+  @ApiBadRequestResponse({ description: 'The bingo event was already cancelled or has ended.' })
+  @ApiUnauthorizedResponse({ description: 'Not authorized to cancel the bingo event.' })
+  async cancel(@Req() req: Request, @Param('id') bingoId: number) {
+    const bingo = await this.commandBus.execute(new CancelBingoCommand({ requester: req.userEntity!, bingoId }));
+    const canceledBy = new UserDto(await bingo.canceledBy);
+    const createdBy = new UserDto(await bingo.createdBy);
+    return new BingoDto(bingo, { createdBy, canceledBy });
   }
 }

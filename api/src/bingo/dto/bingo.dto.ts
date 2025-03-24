@@ -5,7 +5,14 @@ import { UserDto } from '@/user/dto/user.dto';
 import { Bingo } from '../bingo.entity';
 
 export class BingoDto {
-  constructor(bingo: Bingo) {
+  constructor(bingo: Bingo, 
+    users?: {
+      createdBy?: UserDto,
+      startedBy?: UserDto,
+      endedBy?: UserDto ,
+      canceledBy?: UserDto,
+      deletedBy?: UserDto
+  }) {
     this.language = bingo.language;
     this.title = bingo.title;
     this.description = bingo.description;
@@ -15,40 +22,22 @@ export class BingoDto {
     this.fullLineValue = bingo.fullLineValue;
     this.startDate = bingo.startDate;
     this.endDate = bingo.endDate;
-    this.createdBy = null;
+    this.createdBy = users?.createdBy;
     this.startedAt = bingo.startedAt;
-    this.startedBy = null;
+    this.startedBy = users?.startedBy;
     this.endedAt = bingo.endedAt;
-    this.endedBy = null;
+    this.endedBy = users?.endedBy;
     this.canceledAt = bingo.canceledAt;
-    this.canceledBy = null;
+    this.canceledBy = users?.canceledBy;
+    this.deletedBy = users?.deletedBy;
   }
 
-  static async fromBingo(bingo: Bingo): Promise<BingoDto> {
-    const dto = new BingoDto(bingo);
-
-    const [createdBy, startedBy, endedBy, canceledBy, updatedBy] = await Promise.all([
-      bingo.createdBy,
-      bingo.startedBy,
-      bingo.endedBy,
-      bingo.canceledBy,
-      bingo.updatedBy,
-    ]);
-
-    dto.createdBy = createdBy ? new UserDto(createdBy) : null;
-    dto.startedBy = startedBy ? new UserDto(startedBy) : null;
-    dto.endedBy = endedBy ? new UserDto(endedBy) : null;
-    dto.canceledBy = canceledBy ? new UserDto(canceledBy) : null;
-    dto.updatedBy = updatedBy ? new UserDto(updatedBy) : null;
-
-    return dto;
-  }
 
   @ApiProperty()
-  createdBy: UserDto | null;
+  createdBy: UserDto | undefined;
 
   @ApiProperty()
-  updatedBy: UserDto | null;
+  updatedBy: UserDto | undefined;
 
   @ApiProperty()
   language: string;
@@ -81,17 +70,20 @@ export class BingoDto {
   startedAt: Date;
 
   @ApiProperty()
-  startedBy: UserDto | null;
+  startedBy: UserDto | undefined;
 
   @ApiProperty()
   endedAt: Date;
 
   @ApiProperty()
-  endedBy: UserDto | null;
+  endedBy: UserDto | undefined;
 
   @ApiProperty()
   canceledAt: Date;
 
   @ApiProperty()
-  canceledBy: UserDto | null;
+  canceledBy: UserDto | undefined;
+
+  @ApiProperty()
+  deletedBy: UserDto | undefined;
 }

@@ -33,25 +33,24 @@ export class GetBingoByIdHandler {
   ) {}
 
   async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
-    console.log("Requester id:", query.params.requester!.id)
-    console.log("Requester role", query.params.requester!.role)
     const bingoId = Number(query.params.bingoId);
     const q = this.bingoRepository
       .createQueryBuilder('bingo')
       .where('bingo.id = :bingoId', { bingoId: bingoId })
-      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = bingo.id')
+      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = bingo.id');
     if (!query.params.requester) {
       q.andWhere('bingo.private = false');
     } else {
-      q.andWhere('(bingo.private = false OR :requesterRole IN (:...roles) OR bingoParticipant.user_id = :requesterId)', {
-        requesterId: query.params.requester.id,
-        requesterRole: query.params.requester.role,
-        roles: ['moderator', 'admin']
-      });
+      q.andWhere(
+        '(bingo.private = false OR :requesterRole IN (:...roles) OR bingoParticipant.user_id = :requesterId)',
+        {
+          requesterId: query.params.requester.id,
+          requesterRole: query.params.requester.role,
+          roles: ['moderator', 'admin'],
+        },
+      );
     }
-
     const bingo = await q.getOne();
-    console.log("Found bingo:", bingo);
     if (!bingo) {
       throw new NotFoundException();
     }

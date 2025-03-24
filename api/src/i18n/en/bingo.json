@@ -7,7 +7,22 @@
         "bingoNotPending": "The bingo event has already started.",
         "notAuthorized": "You are not authorized to modify this bingo."
     },
+    "deleteBingo": {
+        "bingoNotFound": "No bingo with this id was found.",
+        "notAuthorized": "You are not authorized to delete this bingo."
+    },
+    "cancelBingo": {
+        "bingoNotFound": "No bingo with this id was found.",
+        "notAuthorized": "You are not authorized to cancel this bingo.",
+        "alreadyEndedOrCanceled": "Bingo event is already canceled or has already finished."
+    },
     "searchBingoActivities": {
         "bingoNotFound": "No bingo with this id was found."
+    },
+    "formatBingoActivities":{
+        "title": "Bingo {action} by {username}."
+    },
+    "activityActions": {
+        "created": "created"
     }
 }
