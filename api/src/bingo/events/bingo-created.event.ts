@@ -1,5 +1,5 @@
 import { CommandBus, EventsHandler } from '@nestjs/cqrs';
-import { type CreateBingoDto } from '../dto/create-bingo.dto';
+
 import { CreateActivityCommand } from '@/activity/commands/create-activity.command';
 
 export type BingoCreatedParams = {

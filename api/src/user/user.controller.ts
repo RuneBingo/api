@@ -15,6 +15,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { I18n, I18nService } from 'nestjs-i18n';
 
+import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
 import { AuthGuard } from '@/auth/guards/auth.guard';
 
 import { FormatUserActivitiesCommand } from './commands/format-user-activities.command';
@@ -25,7 +26,6 @@ import { UserDto } from './dto/user.dto';
 import { FindUserByUsernameQuery } from './queries/find-user-by-username.query';
 import { SearchUserActivitiesParams, SearchUserActivitiesQuery } from './queries/search-user-activities.query';
 import { SearchUsersParams, SearchUsersQuery } from './queries/search-users.query';
-import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
 
 @Controller('v1/users')
 export class UserController {

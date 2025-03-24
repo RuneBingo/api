@@ -1,14 +1,16 @@
-import { User } from '@/user/user.entity';
-import { Bingo } from '../bingo.entity';
-import { Command, CommandHandler, QueryBus } from '@nestjs/cqrs';
-import { Repository } from 'typeorm';
-import { I18nService } from 'nestjs-i18n';
-import { I18nTranslations } from '@/i18n/types';
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
-import { userHasRole } from '@/auth/roles/roles.utils';
+import { Command, CommandHandler, QueryBus } from '@nestjs/cqrs';
+import { InjectRepository } from '@nestjs/typeorm';
+import { I18nService } from 'nestjs-i18n';
+import { Repository } from 'typeorm';
+
 import { Roles } from '@/auth/roles/roles.constants';
+import { userHasRole } from '@/auth/roles/roles.utils';
+import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
+import { I18nTranslations } from '@/i18n/types';
+import { User } from '@/user/user.entity';
+
+import { Bingo } from '../bingo.entity';
 
 export type CancelBingoParams = {
   requester: User;
@@ -40,9 +42,9 @@ export class CancelBingoHandler {
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.deleteBingo.bingoNotFound'));
     }
-    
+
     if (bingo.canceledAt || bingo.endedAt) {
-        throw new BadRequestException(this.i18nService.t('bingo.cancelBingo.alreadyEndedOrCanceled'));
+      throw new BadRequestException(this.i18nService.t('bingo.cancelBingo.alreadyEndedOrCanceled'));
     }
 
     const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingoId }));

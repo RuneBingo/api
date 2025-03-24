@@ -5,14 +5,16 @@ import { UserDto } from '@/user/dto/user.dto';
 import { Bingo } from '../bingo.entity';
 
 export class BingoDto {
-  constructor(bingo: Bingo, 
+  constructor(
+    bingo: Bingo,
     users?: {
-      createdBy?: UserDto,
-      startedBy?: UserDto,
-      endedBy?: UserDto ,
-      canceledBy?: UserDto,
-      deletedBy?: UserDto
-  }) {
+      createdBy?: UserDto;
+      startedBy?: UserDto;
+      endedBy?: UserDto;
+      canceledBy?: UserDto;
+      deletedBy?: UserDto;
+    },
+  ) {
     this.language = bingo.language;
     this.title = bingo.title;
     this.description = bingo.description;
@@ -31,7 +33,6 @@ export class BingoDto {
     this.canceledBy = users?.canceledBy;
     this.deletedBy = users?.deletedBy;
   }
-
 
   @ApiProperty()
   createdBy: UserDto | undefined;

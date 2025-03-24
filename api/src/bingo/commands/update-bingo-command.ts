@@ -1,20 +1,16 @@
-import { Command, QueryBus } from '@nestjs/cqrs';
-
-import { type User } from '@/user/user.entity';
-
-import { Bingo } from '../bingo.entity';
-import { type UpdateBingoDto } from '../dto/update-bingo.dto';
-
 import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CommandHandler } from '@nestjs/cqrs';
+import { Command, QueryBus, CommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
-import { I18nTranslations } from '@/i18n/types';
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
-import { userHasRole } from '@/auth/roles/roles.utils';
 import { Roles } from '@/auth/roles/roles.constants';
+import { userHasRole } from '@/auth/roles/roles.utils';
+import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
+import { I18nTranslations } from '@/i18n/types';
+import { type User } from '@/user/user.entity';
+
+import { Bingo } from '../bingo.entity';
 
 export type UpdateBingoParams = {
   bingoId: number;
@@ -29,8 +25,7 @@ export type UpdateBingoParams = {
     fullLineValue?: number;
     startDate?: Date;
     endDate?: Date;
-  }
-
+  };
 };
 
 export type UpdateBingoResult = Bingo;
@@ -48,8 +43,8 @@ export class UpdateBingoCommand extends Command<Bingo> {
     fullLineValue?: number;
     startDate?: Date;
     endDate?: Date;
-  }
-  constructor({bingoId, requester, updates}) {
+  };
+  constructor({ bingoId, requester, updates }: UpdateBingoParams) {
     super();
     this.bingoId = bingoId;
     this.requester = requester;
@@ -63,15 +58,13 @@ export class UpdateBingoHandler {
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
     private readonly i18nService: I18nService<I18nTranslations>,
-    private readonly queryBus: QueryBus
+    private readonly queryBus: QueryBus,
   ) {}
 
   async execute(command: UpdateBingoCommand): Promise<UpdateBingoResult> {
-    const { bingoId, requester } =
-    command;
+    const { bingoId, requester } = command;
 
     let bingo = await this.bingoRepository.findOneBy({ id: bingoId });
-
 
     if (!bingo) {
       throw new NotFoundException(this.i18nService.t('bingo.updateBingo.bingoNotFound'));

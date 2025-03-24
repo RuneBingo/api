@@ -1,11 +1,10 @@
 import { Command, CommandHandler, EventBus } from '@nestjs/cqrs';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
-import { type CreateBingoDto } from '../dto/create-bingo.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { BingoCreatedEvent } from '../events/bingo-created.event';
 
 export type CreateBingoParams = {
@@ -98,7 +97,7 @@ export class CreateBingoHandler {
         height,
         fullLineValue,
         startDate,
-        endDate
+        endDate,
       }),
     );
 

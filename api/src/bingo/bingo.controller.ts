@@ -1,17 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Query,
-  Req,
-  UseGuards,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
@@ -20,14 +7,17 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
-  ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
 import { AuthGuard } from '@/auth/guards/auth.guard';
 import { AddBingoParticipantCommand } from '@/bingo-participant/commands/add-bingo-participant.command';
+import { UserDto } from '@/user/dto/user.dto';
 
+import { CancelBingoCommand } from './commands/cancel-bingo-command';
 import { CreateBingoCommand } from './commands/create-bingo.command';
+import { DeleteBingoCommand } from './commands/delete-bingo-command';
 import { FormatBingoActivitiesCommand } from './commands/format-bingo-activities.command';
 import { UpdateBingoCommand } from './commands/update-bingo-command';
 import { BingoDto } from './dto/bingo.dto';
@@ -37,10 +27,6 @@ import { UpdateBingoDto } from './dto/update-bingo.dto';
 import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
-import { PaginatedActivitiesDto } from '@/activity/dto/paginated-activities.dto';
-import { DeleteBingoCommand } from './commands/delete-bingo-command';
-import { UserDto } from '@/user/dto/user.dto';
-import { CancelBingoCommand } from './commands/cancel-bingo-command';
 
 @Controller('v1/bingo')
 export class BingoController {
@@ -106,10 +92,10 @@ export class BingoController {
     const params: GetBingoByIdParams = { bingoId: id, requester: req.userEntity! };
     const bingo = await this.queryBus.execute(new GetBingoByIdQuery(params));
     const createdBy = new UserDto(await bingo.createdBy);
-    const canceledBy = new UserDto(await bingo.canceledBy)
+    const canceledBy = new UserDto(await bingo.canceledBy);
     return new BingoDto(bingo, {
       createdBy,
-      canceledBy
+      canceledBy,
     });
   }
 
@@ -173,7 +159,7 @@ export class BingoController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  @ApiOperation({summary: 'Delete a bingo event'})
+  @ApiOperation({ summary: 'Delete a bingo event' })
   @ApiOkResponse({ description: 'The bingo event has been successfully deleted.' })
   @ApiNotFoundResponse({ description: 'No bingo with provided Id was found.' })
   @ApiUnauthorizedResponse({ description: 'Not authorized to delete the bingo event.' })
@@ -185,7 +171,7 @@ export class BingoController {
 
   @Post(':id/cancel')
   @UseGuards(AuthGuard)
-  @ApiOperation({summary: 'Cancel a bingo event'})
+  @ApiOperation({ summary: 'Cancel a bingo event' })
   @ApiOkResponse({ description: 'The bingo event has been successfully cancelled.' })
   @ApiNotFoundResponse({ description: 'No bingo with provided Id was found.' })
   @ApiBadRequestResponse({ description: 'The bingo event was already cancelled or has ended.' })

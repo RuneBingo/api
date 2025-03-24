@@ -46,9 +46,7 @@ export class FormatUserActivitiesHandler {
   }
 
   private async preloadUsers(activities: Activity[]): Promise<void> {
-    const userIds = activities.map(
-      (activity) => activity.createdById,
-    ).filter(Boolean) as number[];
+    const userIds = activities.map((activity) => activity.createdById).filter(Boolean) as number[];
 
     const users = await this.userRepository.find({ where: { id: In(userIds) } });
 

@@ -1,6 +1,6 @@
 import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
 
-import { StrongEntity, StrongEntityParanoid } from '@/db/base.entity';
+import { StrongEntityParanoid } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
 
 @Entity()
@@ -75,9 +75,9 @@ export class Bingo extends StrongEntityParanoid {
   canceledBy: Promise<User>;
 
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({name: 'deleted_by'})
-  deletedBy: Promise<User>
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy: Promise<User>;
 
-  @Column({type: 'timestamptz', nullable: true})
+  @Column({ type: 'timestamptz', nullable: true })
   maxRegistrationDate: Date;
 }

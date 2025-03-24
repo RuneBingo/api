@@ -18,13 +18,7 @@ export class ActivityDto {
   @ApiProperty({ required: false, type: Array })
   body?: string[] | string;
 
-  constructor(
-    createdBy: UserDto | null,
-    createdAt: Date,
-    key: string,
-    title: string,
-    body?: string[] | string,
-  ) {
+  constructor(createdBy: UserDto | null, createdAt: Date, key: string, title: string, body?: string[] | string) {
     this.createdBy = createdBy;
     this.createdAt = createdAt;
     this.key = key;
