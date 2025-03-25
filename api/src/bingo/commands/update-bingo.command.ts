@@ -1,19 +1,17 @@
-import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Command, QueryBus, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
-import { Roles } from '@/auth/roles/roles.constants';
-import { userHasRole } from '@/auth/roles/roles.utils';
 import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { BingoPolicies } from '../bingo.policies';
 import { slugifyTitle } from '../bingo.util';
 import { BingoUpdatedEvent } from '../events/bingo-updated.event';
-import { BingoPolicies } from '../bingo.policies';
 
 export type UpdateBingoParams = {
   bingoId: number;
@@ -81,7 +79,7 @@ export class UpdateBingoHandler {
     });
 
     if (!new BingoPolicies(requester).canUpdate(participant, bingo)) {
-      throw new ForbiddenException(this.i18nService.t('bingo.updateBingo.forbidden'))
+      throw new ForbiddenException(this.i18nService.t('bingo.updateBingo.forbidden'));
     }
 
     const updates = Object.fromEntries(
@@ -106,7 +104,7 @@ export class UpdateBingoHandler {
       const existingBingo = await this.bingoRepository.findOneBy({ slug: titleSlug });
 
       if (existingBingo) {
-        throw new BadRequestException(this.i18nService.t('bingo.updateBingo.titleNotUnique'));
+        throw new ForbiddenException(this.i18nService.t('bingo.updateBingo.titleNotUnique'));
       }
       bingo.slug = titleSlug;
       console.log('Slug', titleSlug);

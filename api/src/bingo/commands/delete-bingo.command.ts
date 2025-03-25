@@ -1,20 +1,16 @@
-import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Command, CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 
-import { Roles } from '@/auth/roles/roles.constants';
-import { userHasRole } from '@/auth/roles/roles.utils';
 import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
-import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
-import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
 import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
-import { BingoDeletedEvent } from '../events/bingo-deleted.event';
 import { BingoPolicies } from '../bingo.policies';
+import { BingoDeletedEvent } from '../events/bingo-deleted.event';
 
 export type DeleteBingoParams = {
   requester: User;

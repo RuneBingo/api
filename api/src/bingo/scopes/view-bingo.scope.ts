@@ -1,17 +1,18 @@
-import { Scope } from "@/db/scope";
-import { Bingo } from "../bingo.entity";
+import { Scope } from '@/db/scope';
+
+import { type Bingo } from '../bingo.entity';
 
 export class ViewBingoScope extends Scope<Bingo> {
-    resolve() {
-        if (!this.requester) return this.query.andWhere('bingo.private = false')
+  resolve() {
+    if (!this.requester) return this.query.andWhere('bingo.private = false');
 
-        return this.query.andWhere(
-            '(bingo.private = false OR :requesterRole IN (:...roles) OR bingoParticipant.user_id = :requesterId)',
-            {
-              requesterId: this.requester.id,
-              requesterRole: this.requester.role,
-              roles: ['moderator', 'admin'],
-            },
-          );
-    }
+    return this.query.andWhere(
+      '(bingo.private = false OR :requesterRole IN (:...roles) OR bingoParticipant.user_id = :requesterId)',
+      {
+        requesterId: this.requester.id,
+        requesterRole: this.requester.role,
+        roles: ['moderator', 'admin'],
+      },
+    );
+  }
 }

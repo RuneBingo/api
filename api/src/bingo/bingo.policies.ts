@@ -1,18 +1,16 @@
-import { User } from '@/user/user.entity';
-import { Bingo } from './bingo.entity';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
-import { userHasRole } from '@/auth/roles/roles.utils';
+import { type Repository } from 'typeorm';
+
 import { Roles } from '@/auth/roles/roles.constants';
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
+import { userHasRole } from '@/auth/roles/roles.utils';
+import { type BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
+import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
+import { type User } from '@/user/user.entity';
+
+import { type Bingo } from './bingo.entity';
 
 export class BingoPolicies {
-  constructor(
-    private readonly requester: User
-  ) {}
+  constructor(private readonly requester: User) {}
 
   async canCreate(bingoRepository: Repository<Bingo>) {
     const existingBingo = await bingoRepository.findOne({
@@ -64,10 +62,9 @@ export class BingoPolicies {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
 
     if (!participant || (!userHasBingoRole(participant, BingoRoles.Organizer) && !requesterIsModerator)) {
-        return false;
+      return false;
     }
 
     return true;
   }
-
 }

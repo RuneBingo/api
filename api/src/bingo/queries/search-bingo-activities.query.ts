@@ -5,13 +5,13 @@ import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
 import { Activity } from '@/activity/activity.entity';
+import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 import { type PaginatedDtoWithoutTotal } from '@/db/dto/paginated.dto';
 import { resolvePaginatedQueryWithoutTotal, type PaginatedQueryParams } from '@/db/paginated-query.utils';
 import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 import { BingoPolicies } from '../bingo.policies';
 
 export type SearchBingoActivitiesParams = PaginatedQueryParams<{
