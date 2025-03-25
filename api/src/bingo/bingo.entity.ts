@@ -11,8 +11,8 @@ export class Bingo extends StrongEntityParanoid {
   @Column()
   title: string;
 
-  @Column({ unique: true })
-  titleSlug: string;
+  @Column()
+  slug: string;
 
   @Column()
   description: string;

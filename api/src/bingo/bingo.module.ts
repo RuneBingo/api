@@ -18,8 +18,7 @@ import { BingoCanceledHandler } from './events/bingo-canceled.event';
 import { BingoCreatedHandler } from './events/bingo-created.event';
 import { BingoDeletedHandler } from './events/bingo-deleted.event';
 import { BingoUpdatedHandler } from './events/bingo-updated.event';
-import { FindBingoByIdHandler } from './queries/find-bingo-by-id.query';
-import { FindBingoByTitleSlugHandler } from './queries/find-bingo-by-title-slug.query';
+import { FindBingoBySlugHandler } from './queries/find-bingo-by-slug.query';
 import { SearchBingoActivitiesHandler } from './queries/search-bingo-activities.query';
 import { SearchBingosHandler } from './queries/search-bingos.query';
 
@@ -36,8 +35,7 @@ import { SearchBingosHandler } from './queries/search-bingos.query';
     CancelBingoHandler,
 
     //Queries
-    FindBingoByIdHandler,
-    FindBingoByTitleSlugHandler,
+    FindBingoBySlugHandler,
     SearchBingosHandler,
     SearchBingoActivitiesHandler,
     GetBingoParticipantsHandler,

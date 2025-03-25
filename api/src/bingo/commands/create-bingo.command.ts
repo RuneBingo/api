@@ -78,7 +78,7 @@ export class CreateBingoHandler {
 
     const titleSlug = slugifyTitle(title);
 
-    const existingBingo = await this.bingoRepository.findOneBy({ titleSlug: titleSlug });
+    const existingBingo = await this.bingoRepository.findOneBy({ slug: titleSlug });
 
     if (existingBingo) {
       throw new BadRequestException(this.i18nService.t('bingo.createBingo.titleNotUnique'));
@@ -88,7 +88,7 @@ export class CreateBingoHandler {
     bingo.createdById = requester.id;
     bingo.language = language;
     bingo.title = title;
-    bingo.titleSlug = titleSlug;
+    bingo.slug = titleSlug;
     bingo.description = description;
     bingo.private = isPrivate;
     bingo.width = width;

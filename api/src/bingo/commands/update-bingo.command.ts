@@ -108,11 +108,13 @@ export class UpdateBingoHandler {
     if (updates.title) {
       const titleSlug = slugifyTitle(updates.title);
 
-      const existingBingo = await this.bingoRepository.findOneBy({ titleSlug: titleSlug });
+      const existingBingo = await this.bingoRepository.findOneBy({ slug: titleSlug });
 
       if (existingBingo) {
         throw new BadRequestException(this.i18nService.t('bingo.updateBingo.titleNotUnique'));
       }
+      bingo.slug = titleSlug;
+      console.log('Slug', titleSlug);
     }
 
     this.eventBus.publish(
