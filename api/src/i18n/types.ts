@@ -32,6 +32,7 @@ export type I18nTranslations = {
             "bingoNotFound": string;
             "bingoNotPending": string;
             "notAuthorized": string;
+            "titleNotUnique": string;
         };
         "deleteBingo": {
             "bingoNotFound": string;
@@ -45,7 +46,10 @@ export type I18nTranslations = {
         "searchBingoActivities": {
             "bingoNotFound": string;
         };
-        "getBingoById": {
+        "findBingoById": {
+            "bingoNotFound": string;
+        };
+        "findBingoByTitleSlug": {
             "bingoNotFound": string;
         };
         "activity": {
@@ -72,6 +76,9 @@ export type I18nTranslations = {
             "canceled": {
                 "title": string;
             };
+        };
+        "createBingo": {
+            "titleNotUnique": string;
         };
         "formatBingoActivities": {
             "title": string;

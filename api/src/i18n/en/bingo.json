@@ -5,7 +5,8 @@
     "updateBingo": {
         "bingoNotFound": "No bingo with this id was found.",
         "bingoNotPending": "The bingo event has already started.",
-        "notAuthorized": "You are not authorized to modify this bingo."
+        "notAuthorized": "You are not authorized to modify this bingo.",
+        "titleNotUnique": "A bingo with this title already exists."
     },
     "deleteBingo": {
         "bingoNotFound": "No bingo with this id was found.",
@@ -19,8 +20,11 @@
     "searchBingoActivities": {
         "bingoNotFound": "No bingo with this id was found."
     },
-    "getBingoById": {
+    "findBingoById": {
         "bingoNotFound": "No bingo with this id was found."
+    },
+    "findBingoByTitleSlug": {
+        "bingoNotFound": "No bingo with this title slug was found."
     },
     "activity": {
         "created": {
@@ -46,6 +50,9 @@
         "canceled": {
             "title": "{username} has canceled the bingo."
         }
+    },
+    "createBingo": {
+        "titleNotUnique": "A bingo with this title already exists."
     }
     
 }

@@ -9,21 +9,21 @@ import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 
-export type GetBingoByIdParams = {
+export type FindBingoByIdParams = {
   bingoId: number;
   requester: User | undefined;
 };
 
-export type GetBingoByIdResult = Bingo;
+export type FindBingoByIdResult = Bingo;
 
-export class GetBingoByIdQuery extends Query<GetBingoByIdResult> {
-  constructor(public readonly params: GetBingoByIdParams) {
+export class FindBingoByIdQuery extends Query<FindBingoByIdResult> {
+  constructor(public readonly params: FindBingoByIdParams) {
     super();
   }
 }
 
-@QueryHandler(GetBingoByIdQuery)
-export class GetBingoByIdHandler {
+@QueryHandler(FindBingoByIdQuery)
+export class FindBingoByIdHandler {
   constructor(
     private readonly i18nService: I18nService<I18nTranslations>,
     @InjectRepository(Bingo)
@@ -32,7 +32,7 @@ export class GetBingoByIdHandler {
     private readonly queryBus: QueryBus,
   ) {}
 
-  async execute(query: GetBingoByIdQuery): Promise<GetBingoByIdResult> {
+  async execute(query: FindBingoByIdQuery): Promise<FindBingoByIdResult> {
     const bingoId = Number(query.params.bingoId);
     const q = this.bingoRepository
       .createQueryBuilder('bingo')

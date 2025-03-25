@@ -44,11 +44,11 @@ export class CreateBingoDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'startDate must be in the format yyyy-mm-dd',
   })
-  startDate: Date;
+  startDate: string;
 
   @ApiProperty()
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'startDate must be in the format yyyy-mm-dd',
   })
-  endDate: Date;
+  endDate: string;
 }

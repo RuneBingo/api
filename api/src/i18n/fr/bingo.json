@@ -5,7 +5,8 @@
     "updateBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
         "bingoNotPending": "L'évènement de bingo est déjà commencé.",
-        "notAuthorized": "Vous n'êtes pas auàrisé à modifier ce bingo."
+        "notAuthorized": "Vous n'êtes pas auàrisé à modifier ce bingo.",
+        "titleNotUnique": "Un bingo avec ce titre existe déjà."
     },
     "deleteBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
@@ -19,11 +20,14 @@
     "searchBingoActivities": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé."
     },
-    "formatBingoActivities":{
+    "formatBingoActivities": {
         "title": "Bingo {action} par {username}."
     },
-    "getBingoById": {
+    "findBingoById": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé."
+    },
+    "findBingoByTitleSlug": {
+        "bingoNotFound": "Aucun bingo avec ce titre slug n'a été trouvé."
     },
     "activity": {
         "created": {
@@ -31,7 +35,7 @@
         },
         "updated": {
             "title": "{username} a mis à jour le bingo.",
-            "body":{
+            "body": {
                 "language": "A mis à jour le langage à {language}.",
                 "title": "A mis à jour le titre à {title}.",
                 "description": "A mis à jour la description à {description}.",
@@ -49,5 +53,8 @@
         "canceled": {
             "title": "{username} a annulé le bingo."
         }
+    },
+    "createBingo": {
+        "titleNotUnique": "Un bingo avec ce titre existe déjà."
     }
 }

@@ -1,10 +1,14 @@
+import { BadRequestException } from '@nestjs/common';
 import { Command, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
+import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
+import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { slugifyTitle } from '../bingo.util';
 import { BingoCreatedEvent } from '../events/bingo-created.event';
 
 export type CreateBingoParams = {
@@ -16,8 +20,8 @@ export type CreateBingoParams = {
   width: number;
   height: number;
   fullLineValue: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 };
 
 export type CreateBingoResult = Bingo;
@@ -31,8 +35,8 @@ export class CreateBingoCommand extends Command<CreateBingoResult> {
   public readonly width: number;
   public readonly height: number;
   public readonly fullLineValue: number;
-  public readonly startDate: Date;
-  public readonly endDate: Date;
+  public readonly startDate: string;
+  public readonly endDate: string;
   constructor({
     requester,
     language,
@@ -65,28 +69,33 @@ export class CreateBingoHandler {
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
     private readonly eventBus: EventBus,
+    private readonly i18nService: I18nService<I18nTranslations>,
   ) {}
 
   async execute(command: CreateBingoCommand): Promise<CreateBingoResult> {
     const { requester, language, title, description, isPrivate, width, height, fullLineValue, startDate, endDate } =
       command;
 
-    const formattedStartDate = startDate.toISOString().split('T')[0];
-    const formattedEndDate = endDate.toISOString().split('T')[0];
+    const titleSlug = slugifyTitle(title);
 
-    console.log(formattedStartDate);
+    const existingBingo = await this.bingoRepository.findOneBy({ titleSlug: titleSlug });
+
+    if (existingBingo) {
+      throw new BadRequestException(this.i18nService.t('bingo.createBingo.titleNotUnique'));
+    }
 
     const bingo = new Bingo();
     bingo.createdById = requester.id;
     bingo.language = language;
     bingo.title = title;
+    bingo.titleSlug = titleSlug;
     bingo.description = description;
     bingo.private = isPrivate;
     bingo.width = width;
     bingo.height = height;
     bingo.fullLineValue = fullLineValue;
-    bingo.startDate = formattedStartDate;
-    bingo.endDate = formattedEndDate;
+    bingo.startDate = startDate;
+    bingo.endDate = endDate;
     bingo.createdById = command.requester.id;
     bingo.createdBy = Promise.resolve(requester);
     await this.bingoRepository.save(bingo);
@@ -102,8 +111,8 @@ export class CreateBingoHandler {
         width,
         height,
         fullLineValue,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
+        startDate,
+        endDate,
       }),
     );
 

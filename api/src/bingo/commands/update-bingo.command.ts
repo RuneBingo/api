@@ -11,6 +11,7 @@ import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { slugifyTitle } from '../bingo.util';
 import { BingoUpdatedEvent } from '../events/bingo-updated.event';
 
 export type UpdateBingoParams = {
@@ -103,6 +104,16 @@ export class UpdateBingoHandler {
     }
 
     Object.assign(bingo, updates);
+
+    if (updates.title) {
+      const titleSlug = slugifyTitle(updates.title);
+
+      const existingBingo = await this.bingoRepository.findOneBy({ titleSlug: titleSlug });
+
+      if (existingBingo) {
+        throw new BadRequestException(this.i18nService.t('bingo.updateBingo.titleNotUnique'));
+      }
+    }
 
     this.eventBus.publish(
       new BingoUpdatedEvent({

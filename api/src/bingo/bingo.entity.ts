@@ -1,19 +1,18 @@
-import { Column, Entity, Generated, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { StrongEntityParanoid } from '@/db/base.entity';
 import { User } from '@/user/user.entity';
 
 @Entity()
 export class Bingo extends StrongEntityParanoid {
-  @Column({ unique: true, type: 'uuid' })
-  @Generated('uuid')
-  uuid: string;
-
   @Column({ default: 'en' })
   language: string;
 
   @Column()
   title: string;
+
+  @Column({ unique: true })
+  titleSlug: string;
 
   @Column()
   description: string;

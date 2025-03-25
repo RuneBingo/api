@@ -39,7 +39,8 @@ import { BingoDto } from './dto/bingo.dto';
 import { CreateBingoDto } from './dto/create-bingo.dto';
 import { PaginatedBingosDto } from './dto/paginated-bingos.dto';
 import { UpdateBingoDto } from './dto/update-bingo.dto';
-import { GetBingoByIdParams, GetBingoByIdQuery } from './queries/get-bingo-by-id.query';
+import { FindBingoByIdParams, FindBingoByIdQuery } from './queries/find-bingo-by-id.query';
+import { FindBingoByTitleSlugParams, FindBingoByTitleSlugQuery } from './queries/find-bingo-by-title-slug.query';
 import { SearchBingoActivitiesParams, SearchBingoActivitiesQuery } from './queries/search-bingo-activities.query';
 import { SearchBingosParams, SearchBingosQuery } from './queries/search-bingos.query';
 
@@ -102,13 +103,24 @@ export class BingoController {
     return new PaginatedBingosDto({ items: bingosDto, ...pagination });
   }
 
-  @Get(':id')
+  @Get('id/:id')
   @ApiOperation({ summary: 'Find a bingo by its id' })
   @ApiOkResponse({ description: 'The bingo has been found.', type: BingoDto })
   @ApiNotFoundResponse({ description: 'The bingo does not exist.' })
   async findById(@Param('id') id: number, @Req() req: Request): Promise<BingoDto> {
-    const params: GetBingoByIdParams = { bingoId: id, requester: req.userEntity! };
-    const bingo = await this.queryBus.execute(new GetBingoByIdQuery(params));
+    const params: FindBingoByIdParams = { bingoId: id, requester: req.userEntity! };
+    const bingo = await this.queryBus.execute(new FindBingoByIdQuery(params));
+
+    return new BingoDto(bingo);
+  }
+
+  @Get(':titleslug')
+  @ApiOperation({ summary: 'Find a bingo by its title slug' })
+  @ApiOkResponse({ description: 'The bingo has been found.', type: BingoDto })
+  @ApiNotFoundResponse({ description: 'The bingo does not exist.' })
+  async findByTitleSlug(@Param('titleslug') titleSlug: string, @Req() req: Request): Promise<BingoDto> {
+    const params: FindBingoByTitleSlugParams = { titleSlug, requester: req.userEntity! };
+    const bingo = await this.queryBus.execute(new FindBingoByTitleSlugQuery(params));
 
     return new BingoDto(bingo);
   }
