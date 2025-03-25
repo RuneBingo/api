@@ -1,5 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
-import { Query, QueryHandler } from '@nestjs/cqrs';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Query, QueryBus, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
@@ -11,6 +11,8 @@ import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
+import { BingoPolicies } from '../bingo.policies';
 
 export type SearchBingoActivitiesParams = PaginatedQueryParams<{
   requester: User;
@@ -33,10 +35,11 @@ export class SearchBingoActivitiesHandler {
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
     private readonly i18nService: I18nService<I18nTranslations>,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async execute(query: SearchBingoActivitiesQuery): Promise<SearchBingoActivitiesResult> {
-    const { bingoId, ...pagination } = query.params;
+    const { requester, bingoId, ...pagination } = query.params;
 
     const bingo = await this.bingoRepository.findOneBy({ id: bingoId });
 
@@ -44,14 +47,21 @@ export class SearchBingoActivitiesHandler {
       throw new NotFoundException(this.i18nService.t('bingo.searchBingoActivities.bingoNotFound'));
     }
 
+    const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingoId }));
+
+    const participant = bingoParticipants.find((participant) => {
+      return participant.userId === requester.id;
+    });
+
+    if (!new BingoPolicies(requester).canViewActivities(participant)) {
+      throw new ForbiddenException(this.i18nService.t('bingo.activity.forbidden'));
+    }
+
     const q = this.activityRepository
       .createQueryBuilder('activity')
-      .innerJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = activity.trackable_id')
-      .innerJoin('user', 'user', 'user.id = bingoParticipant.user_id')
-      .where('activity.trackable_id = :trackableId', { trackableId: bingoId })
-      .andWhere('(bingoParticipant.role IN (:...bingoRoles) OR user.role IN (:...roles))', {
-        roles: ['admin', 'moderator'],
-        bingoRoles: ['organizer', 'owner'],
+      .where('activity.trackable_id = :trackableId AND activity.key LIKE :keyPrefix ', {
+        trackableId: bingoId,
+        keyPrefix: 'bingo%',
       })
       .orderBy('activity.createdAt', 'DESC');
 

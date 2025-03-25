@@ -4,18 +4,16 @@
     },
     "updateBingo": {
         "bingoNotFound": "No bingo with this id was found.",
-        "bingoNotPending": "The bingo event has already started.",
-        "notAuthorized": "You are not authorized to modify this bingo.",
+        "forbidden": "You don't have permission to update this user or some of the requested fields.",
         "titleNotUnique": "A bingo with this title already exists."
     },
     "deleteBingo": {
         "bingoNotFound": "No bingo with this id was found.",
-        "notAuthorized": "You are not authorized to delete this bingo."
+        "forbidden": "You are not authorized to delete this bingo."
     },
     "cancelBingo": {
         "bingoNotFound": "No bingo with this id was found.",
-        "notAuthorized": "You are not authorized to cancel this bingo.",
-        "alreadyEndedOrCanceled": "Bingo event is already canceled or has already finished."
+        "forbidden": "You are not authorized to cancel this bingo."
     },
     "searchBingoActivities": {
         "bingoNotFound": "No bingo with this id was found."
@@ -49,10 +47,12 @@
         },
         "canceled": {
             "title": "{username} has canceled the bingo."
-        }
+        },
+        "forbidden": "You cannot see this bingos activities."
     },
     "createBingo": {
-        "titleNotUnique": "A bingo with this title already exists."
+        "titleNotUnique": "A bingo with this title already exists.",
+        "forbidden": "You cannot create this bingo."
     }
     
 }

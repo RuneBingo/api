@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Command, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -10,6 +10,7 @@ import { type User } from '@/user/user.entity';
 import { Bingo } from '../bingo.entity';
 import { slugifyTitle } from '../bingo.util';
 import { BingoCreatedEvent } from '../events/bingo-created.event';
+import { BingoPolicies } from '../bingo.policies';
 
 export type CreateBingoParams = {
   requester: User;
@@ -81,7 +82,11 @@ export class CreateBingoHandler {
     const existingBingo = await this.bingoRepository.findOneBy({ slug: titleSlug });
 
     if (existingBingo) {
-      throw new BadRequestException(this.i18nService.t('bingo.createBingo.titleNotUnique'));
+      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.titleNotUnique'));
+    }
+
+    if (!(await new BingoPolicies(requester).canCreate(this.bingoRepository))) {
+      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.forbidden'));
     }
 
     const bingo = new Bingo();

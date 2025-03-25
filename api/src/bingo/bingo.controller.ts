@@ -107,7 +107,7 @@ export class BingoController {
   @ApiOkResponse({ description: 'The bingo has been found.', type: BingoDto })
   @ApiNotFoundResponse({ description: 'The bingo does not exist.' })
   async findByTitleSlug(@Param('titleslug') titleSlug: string, @Req() req: Request): Promise<BingoDto> {
-    const params: FindBingoBySlugParams = { titleSlug, requester: req.userEntity! };
+    const params: FindBingoBySlugParams = { slug: titleSlug, requester: req.userEntity! };
     const bingo = await this.queryBus.execute(new FindBingoBySlugQuery(params));
 
     return new BingoDto(bingo);

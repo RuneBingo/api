@@ -4,18 +4,16 @@
     },
     "updateBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
-        "bingoNotPending": "L'évènement de bingo est déjà commencé.",
-        "notAuthorized": "Vous n'êtes pas auàrisé à modifier ce bingo.",
+        "forbidden": "Vous n'avez pas la permission de modifier ce bingo.",
         "titleNotUnique": "Un bingo avec ce titre existe déjà."
     },
     "deleteBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
-        "notAuthorized": "Vous n'êtes pas auàrisé à modifier ce bingo."
+        "forbidden": "Vous n'êtes pas autorisé à supprimer ce bingo."
     },
     "cancelBingo": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé.",
-        "notAuthorized": "Vous n'êtes pas auàrisé à annuler ce bingo.",
-        "alreadyEndedOrCanceled": "Le bingo est déjà annulé ou fini."
+        "forbidden": "Vous n'êtes pas auàrisé à annuler ce bingo."
     },
     "searchBingoActivities": {
         "bingoNotFound": "Aucun bingo avec ce id n'a été trouvé."
@@ -52,7 +50,8 @@
         },
         "canceled": {
             "title": "{username} a annulé le bingo."
-        }
+        },
+        "forbidden": "Vous ne pouvez voir les activité de ce bingo."
     },
     "createBingo": {
         "titleNotUnique": "Un bingo avec ce titre existe déjà."

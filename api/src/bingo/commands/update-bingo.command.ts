@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Command, QueryBus, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -13,6 +13,7 @@ import { type User } from '@/user/user.entity';
 import { Bingo } from '../bingo.entity';
 import { slugifyTitle } from '../bingo.util';
 import { BingoUpdatedEvent } from '../events/bingo-updated.event';
+import { BingoPolicies } from '../bingo.policies';
 
 export type UpdateBingoParams = {
   bingoId: number;
@@ -79,14 +80,8 @@ export class UpdateBingoHandler {
       return participant.userId === requester.id;
     });
 
-    const requesterIsModerator = userHasRole(requester, Roles.Moderator);
-
-    if (!requesterIsModerator && !participant) {
-      throw new UnauthorizedException(this.i18nService.t('bingo.updateBingo.notAuthorized'));
-    }
-
-    if (!requesterIsModerator && bingo.startedAt) {
-      throw new BadRequestException(this.i18nService.t('bingo.updateBingo.bingoNotPending'));
+    if (!new BingoPolicies(requester).canUpdate(participant, bingo)) {
+      throw new ForbiddenException(this.i18nService.t('bingo.updateBingo.forbidden'))
     }
 
     const updates = Object.fromEntries(

@@ -30,18 +30,16 @@ export type I18nTranslations = {
         };
         "updateBingo": {
             "bingoNotFound": string;
-            "bingoNotPending": string;
-            "notAuthorized": string;
+            "forbidden": string;
             "titleNotUnique": string;
         };
         "deleteBingo": {
             "bingoNotFound": string;
-            "notAuthorized": string;
+            "forbidden": string;
         };
         "cancelBingo": {
             "bingoNotFound": string;
-            "notAuthorized": string;
-            "alreadyEndedOrCanceled": string;
+            "forbidden": string;
         };
         "searchBingoActivities": {
             "bingoNotFound": string;
@@ -76,9 +74,11 @@ export type I18nTranslations = {
             "canceled": {
                 "title": string;
             };
+            "forbidden": string;
         };
         "createBingo": {
             "titleNotUnique": string;
+            "forbidden": string;
         };
         "formatBingoActivities": {
             "title": string;

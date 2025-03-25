@@ -1,4 +1,4 @@
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Command, CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -14,6 +14,7 @@ import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 import { BingoDeletedEvent } from '../events/bingo-deleted.event';
+import { BingoPolicies } from '../bingo.policies';
 
 export type DeleteBingoParams = {
   requester: User;
@@ -55,10 +56,8 @@ export class DeleteBingoHandler {
       return participant.userId === requester.id;
     });
 
-    const requesterIsModerator = userHasRole(requester, Roles.Moderator);
-
-    if (!requesterIsModerator && (!participant || !userHasBingoRole(participant, BingoRoles.Owner))) {
-      throw new UnauthorizedException(this.i18nService.t('bingo.deleteBingo.notAuthorized'));
+    if (!new BingoPolicies(requester).canDelete(participant)) {
+      throw new ForbiddenException(this.i18nService.t('bingo.deleteBingo.forbidden'));
     }
 
     const queryRunner = this.dataSource.createQueryRunner();
