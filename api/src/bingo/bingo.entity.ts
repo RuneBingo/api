@@ -44,7 +44,7 @@ export class Bingo extends StrongEntityParanoid {
   updatedBy: Promise<User>;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  startedAt: Date;
+  startedAt: Date | null;
 
   @Column({ name: 'started_by', type: 'int', nullable: true })
   startedById: number | null = null;
@@ -54,7 +54,7 @@ export class Bingo extends StrongEntityParanoid {
   startedBy: Promise<User>;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  endedAt: Date;
+  endedAt: Date | null;
 
   @Column({ name: 'ended_by', type: 'int', nullable: true })
   endedById: number | null = null;
@@ -64,7 +64,7 @@ export class Bingo extends StrongEntityParanoid {
   endedBy: Promise<User>;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  canceledAt: Date;
+  canceledAt: Date | null;
 
   @Column({ name: 'canceled_by', type: 'int', nullable: true })
   canceledById: number | null = null;

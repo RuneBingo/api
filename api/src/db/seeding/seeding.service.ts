@@ -8,6 +8,7 @@ import { Seeder } from './seeder';
 import { SessionSeeder } from './session.seeder';
 import { UserSeeder } from './user.seeder';
 import { AppConfig } from '../../config';
+import { BingoSeeder } from './bingo.seeder';
 
 @Injectable()
 export class SeedingService {
@@ -18,6 +19,7 @@ export class SeedingService {
     // Strong entities
     UserSeeder,
     SessionSeeder,
+    BingoSeeder,
     // Weak entities
     // Add more seeders here
   ];
@@ -39,7 +41,11 @@ export class SeedingService {
 
     for (const seeder of this.seedingEntityOrder) {
       const instance = new seeder(this.configService, this.dataSource, this);
-      await instance.seed();
+      try {
+        await instance.seed();
+      } catch (error) {
+        this.logger.error('Error instantiating seeds: ', error);
+      }
 
       if (!this.seederTypeMap.has(instance.entityName)) {
         this.logger.error(
