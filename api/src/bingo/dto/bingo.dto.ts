@@ -72,19 +72,19 @@ export class BingoDto {
   endDate: string;
 
   @ApiProperty()
-  startedAt: Date;
+  startedAt: Date | null;
 
   @ApiProperty()
   startedBy: UserDto | undefined;
 
   @ApiProperty()
-  endedAt: Date;
+  endedAt: Date | null;
 
   @ApiProperty()
   endedBy: UserDto | undefined;
 
   @ApiProperty()
-  canceledAt: Date;
+  canceledAt: Date | null;
 
   @ApiProperty()
   canceledBy: UserDto | undefined;

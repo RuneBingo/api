@@ -4,7 +4,7 @@ import { Roles } from '@/auth/roles/roles.constants';
 import { userHasRole } from '@/auth/roles/roles.utils';
 import { type BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { BingoRoles } from '@/bingo-participant/roles/bingo-roles.constants';
-import { userHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
+import { participantHasBingoRole } from '@/bingo-participant/roles/bingo-roles.utils';
 import { type User } from '@/user/user.entity';
 
 import { type Bingo } from './bingo.entity';
@@ -26,8 +26,8 @@ export class BingoPolicies {
   }
   canUpdate(participant: BingoParticipant | undefined, bingo: Bingo) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
-
-    if (!requesterIsModerator && (!participant || bingo.startedAt)) {
+    
+    if (!requesterIsModerator && (!participant || !participantHasBingoRole(participant, BingoRoles.Organizer) || bingo.startedAt)) {
       return false;
     }
 
@@ -37,7 +37,7 @@ export class BingoPolicies {
   canDelete(participant: BingoParticipant | undefined) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
 
-    if (!requesterIsModerator && (!participant || !userHasBingoRole(participant, BingoRoles.Owner))) {
+    if (!requesterIsModerator && (!participant || !participantHasBingoRole(participant, BingoRoles.Owner))) {
       return false;
     }
 
@@ -51,7 +51,7 @@ export class BingoPolicies {
       return false;
     }
 
-    if (!requesterIsModerator && (!participant || !userHasBingoRole(participant, BingoRoles.Organizer))) {
+    if (!requesterIsModerator && (!participant || !participantHasBingoRole(participant, BingoRoles.Organizer))) {
       return false;
     }
 
@@ -61,7 +61,7 @@ export class BingoPolicies {
   canViewActivities(participant: BingoParticipant | undefined) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
 
-    if (!participant || (!userHasBingoRole(participant, BingoRoles.Organizer) && !requesterIsModerator)) {
+    if (!participant || (!participantHasBingoRole(participant, BingoRoles.Organizer) && !requesterIsModerator)) {
       return false;
     }
 

@@ -89,6 +89,7 @@ export abstract class Seeder<Entity extends ObjectLiteral, Schema> {
       const identifier = await this.getIdentifier(entity);
       const key = identifierToKeyMap.get(JSON.stringify(identifier));
       if (!key) continue;
+      
 
       this.entityMapping.set(key, entity);
     }

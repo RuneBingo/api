@@ -2,6 +2,6 @@ import { type BingoParticipant } from '@/bingo-participant/bingo-participant.ent
 
 import { bingoRoleHierarchy, type BingoRoles } from './bingo-roles.constants';
 
-export function userHasBingoRole(bingoParticipant: BingoParticipant, bingoRole: BingoRoles) {
+export function participantHasBingoRole(bingoParticipant: BingoParticipant, bingoRole: BingoRoles) {
   return bingoRoleHierarchy.indexOf(bingoParticipant.role) >= bingoRoleHierarchy.indexOf(bingoRole);
 }

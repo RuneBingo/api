@@ -12,7 +12,7 @@ osrs-qc:
   maxRegistrationDate: "2025-03-31"
 
 deleted-bingo:
-  createdById: 1
+  createdById: 2
   language: "en"
   title: "deleted bingo"
   description: "Im deleted"
@@ -23,5 +23,5 @@ deleted-bingo:
   startDate: "2025-04-01"
   endDate: "2025-04-30"
   maxRegistrationDate: "2025-03-31"
-
+  deletedAt: "2024-04-03"
 

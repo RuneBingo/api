@@ -89,6 +89,10 @@ export class CreateBingoHandler {
       throw new ForbiddenException(this.i18nService.t('bingo.createBingo.forbidden'));
     }
 
+    if (new Date(startDate) >= new Date(endDate)) {
+      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.forbidden'));
+    }
+
     const bingo = new Bingo();
     bingo.createdById = requester.id;
     bingo.language = language;
