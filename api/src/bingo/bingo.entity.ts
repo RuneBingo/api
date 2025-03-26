@@ -78,5 +78,5 @@ export class Bingo extends StrongEntityParanoid {
   deletedBy: Promise<User>;
 
   @Column({ type: 'date', nullable: true })
-  maxRegistrationDate: string;
+  maxRegistrationDate?: string;
 }

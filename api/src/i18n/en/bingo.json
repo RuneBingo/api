@@ -1,11 +1,20 @@
 {
+    "createBingo": {
+        "titleNotUnique": "A bingo with this title already exists.",
+        "forbidden": "You cannot create this bingo.",
+        "startDateBeforeEndDate": "The start date must be before the end date.",
+        "registrationDateAfterStartDate": "The registration date must be before the start date."
+    },
     "findById": {
         "notFound": "The bingo doesn't exist."
     },
     "updateBingo": {
         "bingoNotFound": "No bingo with this id was found.",
         "forbidden": "You don't have permission to update this user or some of the requested fields.",
-        "titleNotUnique": "A bingo with this title already exists."
+        "titleNotUnique": "A bingo with this title already exists.",
+        "startDateAfterEndDate": "The start date must be earlier than the end date.",
+        "endDateBeforeStartDate": "The end date must be later than the start date.",
+        "registrationDateAfterStartDate": "The registration date must be before the start date."
     },
     "deleteBingo": {
         "bingoNotFound": "No bingo with this id was found.",
@@ -49,10 +58,6 @@
             "title": "{username} has canceled the bingo."
         },
         "forbidden": "You cannot see this bingos activities."
-    },
-    "createBingo": {
-        "titleNotUnique": "A bingo with this title already exists.",
-        "forbidden": "You cannot create this bingo."
     }
     
 }

@@ -68,6 +68,7 @@ export class BingoController {
         fullLineValue: body.fullLineValue,
         startDate: body.startDate,
         endDate: body.endDate,
+        maxRegistrationDate: body.maxRegistrationDate,
       }),
     );
     await this.commandBus.execute(
@@ -136,6 +137,7 @@ export class BingoController {
           fullLineValue: body.fullLineValue,
           startDate: body.startDate,
           endDate: body.endDate,
+          maxRegistrationDate: body.maxRegistrationDate,
         },
       }),
     );

@@ -3,3 +3,15 @@ char0o:
   bingoId: 1
   role: 'participant'
   teamId: 1
+
+didiking:
+  userId: 5
+  bingoId: 1
+  role: 'organizer'
+  teamId: 1
+
+dee420:
+  userId: 6
+  bingoId: 1
+  role: 'participant'
+  teamId: 1

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, Matches } from 'class-validator';
+import { IsISO8601, IsOptional, Matches } from 'class-validator';
 
 export class UpdateBingoDto {
   @ApiProperty()
@@ -19,15 +19,16 @@ export class UpdateBingoDto {
 
   @ApiProperty()
   @IsOptional()
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-    message: 'startDate must be in the format yyyy-mm-dd',
-  })
+  @IsISO8601()
   startDate: string;
 
   @ApiProperty()
   @IsOptional()
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-    message: 'startDate must be in the format yyyy-mm-dd',
-  })
+  @IsISO8601()
   endDate: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsISO8601()
+  maxRegistrationDate: string;
 }

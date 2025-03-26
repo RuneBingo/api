@@ -24,7 +24,7 @@ export class BingoPolicies {
     }
     return true;
   }
-  canUpdate(participant: BingoParticipant | undefined, bingo: Bingo) {
+  canUpdate(participant: BingoParticipant | null, bingo: Bingo) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
     
     if (!requesterIsModerator && (!participant || !participantHasBingoRole(participant, BingoRoles.Organizer) || bingo.startedAt)) {

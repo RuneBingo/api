@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { Command, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -23,6 +23,7 @@ export type CreateBingoParams = {
   fullLineValue: number;
   startDate: string;
   endDate: string;
+  maxRegistrationDate?: string;
 };
 
 export type CreateBingoResult = Bingo;
@@ -38,6 +39,7 @@ export class CreateBingoCommand extends Command<CreateBingoResult> {
   public readonly fullLineValue: number;
   public readonly startDate: string;
   public readonly endDate: string;
+  public readonly maxRegistrationDate?: string;
   constructor({
     requester,
     language,
@@ -49,6 +51,7 @@ export class CreateBingoCommand extends Command<CreateBingoResult> {
     fullLineValue,
     startDate,
     endDate,
+    maxRegistrationDate,
   }: CreateBingoParams) {
     super();
     this.requester = requester;
@@ -61,6 +64,7 @@ export class CreateBingoCommand extends Command<CreateBingoResult> {
     this.fullLineValue = fullLineValue;
     this.startDate = startDate;
     this.endDate = endDate;
+    this.maxRegistrationDate = maxRegistrationDate;
   }
 }
 
@@ -74,22 +78,39 @@ export class CreateBingoHandler {
   ) {}
 
   async execute(command: CreateBingoCommand): Promise<CreateBingoResult> {
-    const { requester, language, title, description, isPrivate, width, height, fullLineValue, startDate, endDate } =
-      command;
+    const {
+      requester,
+      language,
+      title,
+      description,
+      isPrivate,
+      width,
+      height,
+      fullLineValue,
+      startDate,
+      endDate,
+      maxRegistrationDate,
+    } = command;
+
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    if (maxRegistrationDate && new Date(maxRegistrationDate) >= startDateObj) {
+      throw new BadRequestException(this.i18nService.t('bingo.createBingo.registrationDateAfterStartDate'));
+    }
+
+    if (startDateObj >= endDateObj) {
+      throw new BadRequestException(this.i18nService.t('bingo.createBingo.startDateAfterEndDate'));
+    }
 
     const titleSlug = slugifyTitle(title);
 
     const existingBingo = await this.bingoRepository.findOneBy({ slug: titleSlug });
 
     if (existingBingo) {
-      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.titleNotUnique'));
+      throw new ConflictException(this.i18nService.t('bingo.createBingo.titleNotUnique'));
     }
 
     if (!(await new BingoPolicies(requester).canCreate(this.bingoRepository))) {
-      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.forbidden'));
-    }
-
-    if (new Date(startDate) >= new Date(endDate)) {
       throw new ForbiddenException(this.i18nService.t('bingo.createBingo.forbidden'));
     }
 
@@ -105,6 +126,7 @@ export class CreateBingoHandler {
     bingo.fullLineValue = fullLineValue;
     bingo.startDate = startDate;
     bingo.endDate = endDate;
+    bingo.maxRegistrationDate = maxRegistrationDate;
     bingo.createdById = command.requester.id;
     bingo.createdBy = Promise.resolve(requester);
     await this.bingoRepository.save(bingo);

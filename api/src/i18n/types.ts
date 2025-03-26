@@ -25,6 +25,13 @@ export type I18nTranslations = {
         };
     };
     "bingo": {
+        "createBingo": {
+            "titleNotUnique": string;
+            "forbidden": string;
+            "startDateBeforeEndDate": string;
+            "registrationDateAfterStartDate": string;
+            "startDateAfterEndDate": string;
+        };
         "findById": {
             "notFound": string;
         };
@@ -32,6 +39,9 @@ export type I18nTranslations = {
             "bingoNotFound": string;
             "forbidden": string;
             "titleNotUnique": string;
+            "startDateAfterEndDate": string;
+            "endDateBeforeStartDate": string;
+            "registrationDateAfterStartDate": string;
         };
         "deleteBingo": {
             "bingoNotFound": string;
@@ -74,10 +84,6 @@ export type I18nTranslations = {
             "canceled": {
                 "title": string;
             };
-            "forbidden": string;
-        };
-        "createBingo": {
-            "titleNotUnique": string;
             "forbidden": string;
         };
         "formatBingoActivities": {

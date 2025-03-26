@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Command, QueryBus, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -12,6 +12,7 @@ import { Bingo } from '../bingo.entity';
 import { BingoPolicies } from '../bingo.policies';
 import { slugifyTitle } from '../bingo.util';
 import { BingoUpdatedEvent } from '../events/bingo-updated.event';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 export type UpdateBingoParams = {
   bingoId: number;
@@ -26,6 +27,7 @@ export type UpdateBingoParams = {
     fullLineValue?: number;
     startDate?: string;
     endDate?: string;
+    maxRegistrationDate?: string;
   };
 };
 
@@ -44,6 +46,7 @@ export class UpdateBingoCommand extends Command<Bingo> {
     fullLineValue?: number;
     startDate?: string;
     endDate?: string;
+    maxRegistrationDate?: string;
   };
   constructor({ bingoId, requester, updates }: UpdateBingoParams) {
     super();
@@ -58,8 +61,9 @@ export class UpdateBingoHandler {
   constructor(
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
+    @InjectRepository(BingoParticipant)
+    private readonly bingoParticipantRepository: Repository<BingoParticipant>,
     private readonly i18nService: I18nService<I18nTranslations>,
-    private readonly queryBus: QueryBus,
     private readonly eventBus: EventBus,
   ) {}
 
@@ -72,13 +76,12 @@ export class UpdateBingoHandler {
       throw new NotFoundException(this.i18nService.t('bingo.updateBingo.bingoNotFound'));
     }
 
-    const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingo.id }));
-
-    const participant = bingoParticipants.find((participant) => {
-      return participant.userId === requester.id;
+    const bingoParticipant = await this.bingoParticipantRepository.findOneBy({
+      bingoId: bingo.id,
+      userId: requester.id,
     });
 
-    if (!new BingoPolicies(requester).canUpdate(participant, bingo)) {
+    if (!new BingoPolicies(requester).canUpdate(bingoParticipant, bingo)) {
       throw new ForbiddenException(this.i18nService.t('bingo.updateBingo.forbidden'));
     }
 
@@ -96,7 +99,20 @@ export class UpdateBingoHandler {
       return bingo;
     }
 
-    Object.assign(bingo, updates);
+    const newStartDate = new Date(updates.startDate || bingo.startDate);
+    const newEndDate = new Date(updates.endDate || bingo.endDate);
+
+    if (newStartDate >= newEndDate) {
+      throw new BadRequestException(this.i18nService.t('bingo.updateBingo.startDateAfterEndDate'));
+    }
+
+    if (newEndDate <= newStartDate) {
+      throw new BadRequestException(this.i18nService.t('bingo.updateBingo.endDateBeforeStartDate'));
+    }
+
+    if (updates.maxRegistrationDate && new Date(updates.maxRegistrationDate) >= newStartDate) {
+      throw new BadRequestException(this.i18nService.t('bingo.updateBingo.registrationDateAfterStartDate'));
+    }
 
     if (updates.title) {
       const titleSlug = slugifyTitle(updates.title);
@@ -104,10 +120,9 @@ export class UpdateBingoHandler {
       const existingBingo = await this.bingoRepository.findOneBy({ slug: titleSlug });
 
       if (existingBingo) {
-        throw new ForbiddenException(this.i18nService.t('bingo.updateBingo.titleNotUnique'));
+        throw new BadRequestException(this.i18nService.t('bingo.updateBingo.titleNotUnique'));
       }
       bingo.slug = titleSlug;
-      console.log('Slug', titleSlug);
     }
 
     this.eventBus.publish(
@@ -118,6 +133,7 @@ export class UpdateBingoHandler {
       }),
     );
 
+    Object.assign(bingo, updates);
     bingo.updatedById = requester.id;
     bingo.updatedBy = Promise.resolve(requester);
 

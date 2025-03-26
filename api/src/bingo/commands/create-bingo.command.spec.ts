@@ -7,7 +7,7 @@ import { dbModule } from '@/db';
 import { i18nModule } from '@/i18n';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bingo } from '../bingo.entity';
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { BingoCreatedEvent } from '../events/bingo-created.event';
 import { User } from '@/user/user.entity';
 
@@ -64,9 +64,10 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
+      maxRegistrationDate: '2024-03-21'
     });
 
-    await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    await expect(handler.execute(command)).rejects.toThrow(ConflictException);
   });
 
   it('throws ForbiddenException if user already has an active bingo', async () => {
@@ -83,9 +84,50 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
+      maxRegistrationDate: '2024-03-21'
     });
 
     await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+  });
+
+
+  it('throws BadRequest if the start date is after the end date', async () => {
+    const requester = seedingService.getEntity(User, 'b0aty')
+    
+    const command = new CreateBingoCommand({
+      requester: requester,
+      language: 'en',
+      title: 'My bingo',
+      description: 'Les quebec',
+      isPrivate: false,
+      width: 5,
+      height: 5,
+      fullLineValue: 100,
+      startDate: '2025-05-01',
+      endDate: '2025-04-30'
+    });
+
+    await expect(handler.execute(command)).rejects.toThrow(BadRequestException);
+  });
+
+  it('throws BadRequest if the max registration date is after the start date', async () => {
+    const requester = seedingService.getEntity(User, 'b0aty')
+    
+    const command = new CreateBingoCommand({
+      requester: requester,
+      language: 'en',
+      title: 'My bingo',
+      description: 'Les quebec',
+      isPrivate: false,
+      width: 5,
+      height: 5,
+      fullLineValue: 100,
+      startDate: '2025-04-01',
+      endDate: '2025-04-30',
+      maxRegistrationDate: '2025-04-10'
+    });
+
+    await expect(handler.execute(command)).rejects.toThrow(BadRequestException);
   });
 
   it('creates a new bingo and emits a BingoCreatedEvent', async () => {
@@ -102,6 +144,7 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
+      maxRegistrationDate: '2024-03-21'
     });
     const bingo = await handler.execute(command);
 
@@ -120,6 +163,7 @@ describe('CreateBingoHandler', () => {
     expect(bingo.isDeleted).toBe(false);
     expect(bingo.createdAt).toBeDefined();
     expect(bingo.updatedAt).toBeDefined();
+    expect(bingo.maxRegistrationDate).toBe('2024-03-21');
 
     expect(eventBus.publish).toHaveBeenCalledWith(
       new BingoCreatedEvent({
@@ -152,7 +196,7 @@ describe('CreateBingoHandler', () => {
       height: 5,
       fullLineValue: 100,
       startDate: '2025-04-01',
-      endDate: '2025-04-30',
+      endDate: '2025-04-30'
     });
     const bingo = await handler.execute(command);
 
@@ -171,6 +215,6 @@ describe('CreateBingoHandler', () => {
     expect(bingo.isDeleted).toBe(false);
     expect(bingo.createdAt).toBeDefined();
     expect(bingo.updatedAt).toBeDefined();
-
+    expect(bingo.maxRegistrationDate).toBeNull();
   });
 });
