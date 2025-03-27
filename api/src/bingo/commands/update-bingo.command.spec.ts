@@ -1,15 +1,17 @@
-import { SeedingService } from '@/db/seeding/seeding.service';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
-import { Test, TestingModule } from '@nestjs/testing';
-import { UpdateBingoCommand, UpdateBingoHandler } from './update-bingo.command';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
+import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Bingo } from '../bingo.entity';
 import { User } from '@/user/user.entity';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
+
+import { UpdateBingoCommand, UpdateBingoHandler } from './update-bingo.command';
+import { Bingo } from '../bingo.entity';
 import { BingoUpdatedEvent } from '../events/bingo-updated.event';
 
 describe('UpdateBingoHandler', () => {
@@ -166,6 +168,7 @@ describe('UpdateBingoHandler', () => {
     expect(bingo.updatedById).toBe(requester.id);
     expect(bingo.maxRegistrationDate).toBe('2025-03-31');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(eventBus.publish).toHaveBeenCalledWith(
       new BingoUpdatedEvent({
         bingoId: bingo.id,

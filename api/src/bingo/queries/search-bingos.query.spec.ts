@@ -1,11 +1,13 @@
+import { type TestingModule, Test } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
 import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
 import { User } from '@/user/user.entity';
-import { TestingModule, Test } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SearchBingosHandler, SearchBingosQuery, SearchBingosResult } from './search-bingos.query';
+
+import { SearchBingosHandler, SearchBingosQuery, type SearchBingosResult } from './search-bingos.query';
 import { Bingo } from '../bingo.entity';
 
 describe('SearchUsersHandler', () => {
@@ -64,7 +66,7 @@ describe('SearchUsersHandler', () => {
     const query = new SearchBingosQuery({
       requester,
       search: 'osrs',
-      isPrivate: true
+      isPrivate: true,
     });
 
     const result = await handler.execute(query);
@@ -78,7 +80,7 @@ describe('SearchUsersHandler', () => {
 
     const query = new SearchBingosQuery({
       requester,
-      isPrivate: true
+      isPrivate: true,
     });
 
     const result = await handler.execute(query);
@@ -88,7 +90,10 @@ describe('SearchUsersHandler', () => {
 
   it('applies status filter correctly', async () => {
     const requester = seedingService.getEntity(User, 'char0o');
-    const expectedPendingBingos = [seedingService.getEntity(Bingo, 'osrs-qc'), seedingService.getEntity(Bingo, 'german-osrs')];
+    const expectedPendingBingos = [
+      seedingService.getEntity(Bingo, 'osrs-qc'),
+      seedingService.getEntity(Bingo, 'german-osrs'),
+    ];
     const expectedCanceledBingos = [seedingService.getEntity(Bingo, 'canceled-bingo')];
     const expectedStartedBingos = [seedingService.getEntity(Bingo, 'started-bingo')];
     const expectedEndedBingos = [seedingService.getEntity(Bingo, 'ended-bingo')];

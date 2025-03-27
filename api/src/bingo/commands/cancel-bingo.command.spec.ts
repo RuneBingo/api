@@ -1,16 +1,17 @@
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
+import { type TestingModule, Test } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
 import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
 import { User } from '@/user/user.entity';
-import { EventBus } from '@nestjs/cqrs';
-import { TestingModule, Test } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+
 import { Bingo } from '../bingo.entity';
 import { CancelBingoCommand, CancelBingoHandler } from './cancel-bingo.command';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { BingoCanceledEvent } from '../events/bingo-canceled.event';
 
 describe('CancelBingoHandler', () => {
@@ -18,7 +19,6 @@ describe('CancelBingoHandler', () => {
   let seedingService: SeedingService;
   let eventBus: jest.Mocked<EventBus>;
   let handler: CancelBingoHandler;
-  let dataSource: DataSource;
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
@@ -38,7 +38,6 @@ describe('CancelBingoHandler', () => {
     handler = module.get(CancelBingoHandler);
     eventBus = module.get(EventBus);
     seedingService = module.get(SeedingService);
-    dataSource = module.get(DataSource);
   });
 
   beforeEach(async () => {
@@ -99,6 +98,7 @@ describe('CancelBingoHandler', () => {
     expect(bingo.canceledAt).toBeDefined();
     expect(bingo.canceledById).toBe(requester.id);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(eventBus.publish).toHaveBeenCalledWith(
       new BingoCanceledEvent({
         bingoId: bingo.id,

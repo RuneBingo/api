@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsISO8601, IsOptional, Matches } from 'class-validator';
+import { IsISO8601, IsOptional } from 'class-validator';
 
 export class UpdateBingoDto {
   @ApiProperty()

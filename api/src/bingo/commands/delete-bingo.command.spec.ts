@@ -1,16 +1,18 @@
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
+import { type TestingModule, Test } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+
 import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
 import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
 import { User } from '@/user/user.entity';
-import { EventBus } from '@nestjs/cqrs';
-import { TestingModule, Test } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { Bingo } from '../bingo.entity';
 import { DeleteBingoCommand, DeleteBingoHandler } from './delete-bingo.command';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
 import { BingoDeletedEvent } from '../events/bingo-deleted.event';
 
 describe('DeleteBingoHandler', () => {
@@ -124,6 +126,7 @@ describe('DeleteBingoHandler', () => {
       expect(participant.deletedById).toBe(requester.id);
     });
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(eventBus.publish).toHaveBeenCalledWith(
       new BingoDeletedEvent({
         bingoId: bingo.id,

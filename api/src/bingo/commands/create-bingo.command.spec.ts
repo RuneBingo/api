@@ -1,15 +1,17 @@
-import { SeedingService } from '@/db/seeding/seeding.service';
+import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
-import { Test, TestingModule } from '@nestjs/testing';
-import { CreateBingoCommand, CreateBingoHandler } from './create-bingo.command';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
+import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Bingo } from '../bingo.entity';
-import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
-import { BingoCreatedEvent } from '../events/bingo-created.event';
 import { User } from '@/user/user.entity';
+
+import { CreateBingoCommand, CreateBingoHandler } from './create-bingo.command';
+import { Bingo } from '../bingo.entity';
+import { BingoCreatedEvent } from '../events/bingo-created.event';
 
 describe('CreateBingoHandler', () => {
   let module: TestingModule;
@@ -35,7 +37,6 @@ describe('CreateBingoHandler', () => {
     handler = module.get(CreateBingoHandler);
     eventBus = module.get(EventBus);
     seedingService = module.get(SeedingService);
-
   });
 
   beforeEach(async () => {
@@ -51,8 +52,8 @@ describe('CreateBingoHandler', () => {
   });
 
   it('throws ForbiddenException if title is already in use', async () => {
-    const requester = seedingService.getEntity(User, 'raph')
-    
+    const requester = seedingService.getEntity(User, 'raph');
+
     const command = new CreateBingoCommand({
       requester: requester,
       language: 'en',
@@ -64,15 +65,15 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
-      maxRegistrationDate: '2024-03-21'
+      maxRegistrationDate: '2024-03-21',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(ConflictException);
   });
 
   it('throws ForbiddenException if user already has an active bingo', async () => {
-    const requester = seedingService.getEntity(User, 'char0o')
-    
+    const requester = seedingService.getEntity(User, 'char0o');
+
     const command = new CreateBingoCommand({
       requester: requester,
       language: 'en',
@@ -84,16 +85,15 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
-      maxRegistrationDate: '2024-03-21'
+      maxRegistrationDate: '2024-03-21',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
   });
 
-
   it('throws BadRequest if the start date is after the end date', async () => {
-    const requester = seedingService.getEntity(User, 'b0aty')
-    
+    const requester = seedingService.getEntity(User, 'b0aty');
+
     const command = new CreateBingoCommand({
       requester: requester,
       language: 'en',
@@ -104,15 +104,15 @@ describe('CreateBingoHandler', () => {
       height: 5,
       fullLineValue: 100,
       startDate: '2025-05-01',
-      endDate: '2025-04-30'
+      endDate: '2025-04-30',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(BadRequestException);
   });
 
   it('throws BadRequest if the max registration date is after the start date', async () => {
-    const requester = seedingService.getEntity(User, 'b0aty')
-    
+    const requester = seedingService.getEntity(User, 'b0aty');
+
     const command = new CreateBingoCommand({
       requester: requester,
       language: 'en',
@@ -124,14 +124,14 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
-      maxRegistrationDate: '2025-04-10'
+      maxRegistrationDate: '2025-04-10',
     });
 
     await expect(handler.execute(command)).rejects.toThrow(BadRequestException);
   });
 
   it('creates a new bingo and emits a BingoCreatedEvent', async () => {
-    const requester = seedingService.getEntity(User, 'zezima')
+    const requester = seedingService.getEntity(User, 'zezima');
 
     const command = new CreateBingoCommand({
       requester: requester,
@@ -144,7 +144,7 @@ describe('CreateBingoHandler', () => {
       fullLineValue: 100,
       startDate: '2025-04-01',
       endDate: '2025-04-30',
-      maxRegistrationDate: '2024-03-21'
+      maxRegistrationDate: '2024-03-21',
     });
     const bingo = await handler.execute(command);
 
@@ -165,6 +165,7 @@ describe('CreateBingoHandler', () => {
     expect(bingo.updatedAt).toBeDefined();
     expect(bingo.maxRegistrationDate).toBe('2024-03-21');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(eventBus.publish).toHaveBeenCalledWith(
       new BingoCreatedEvent({
         bingoId: bingo.id,
@@ -183,9 +184,8 @@ describe('CreateBingoHandler', () => {
   });
 
   it('creates a new bingo even tho slug collides with deleted bingo', async () => {
-    const requester = seedingService.getEntity(User, 'b0aty')
+    const requester = seedingService.getEntity(User, 'b0aty');
 
-    
     const command = new CreateBingoCommand({
       requester: requester,
       language: 'en',
@@ -196,7 +196,7 @@ describe('CreateBingoHandler', () => {
       height: 5,
       fullLineValue: 100,
       startDate: '2025-04-01',
-      endDate: '2025-04-30'
+      endDate: '2025-04-30',
     });
     const bingo = await handler.execute(command);
 

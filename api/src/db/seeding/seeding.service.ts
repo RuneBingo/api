@@ -4,12 +4,12 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource, EntityTarget, ObjectLiteral } from 'typeorm';
 
 import { entities } from '..';
+import { BingoParticipantSeeder } from './bingo-participant.seeder';
+import { BingoSeeder } from './bingo.seeder';
 import { Seeder } from './seeder';
 import { SessionSeeder } from './session.seeder';
 import { UserSeeder } from './user.seeder';
 import { AppConfig } from '../../config';
-import { BingoSeeder } from './bingo.seeder';
-import { BingoParticipantSeeder } from './bingo-participant.seeder';
 
 @Injectable()
 export class SeedingService {

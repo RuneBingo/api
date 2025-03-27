@@ -1,16 +1,16 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { Command, CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
+import { Command, CommandHandler, EventBus } from '@nestjs/cqrs';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 import { BingoPolicies } from '../bingo.policies';
 import { BingoDeletedEvent } from '../events/bingo-deleted.event';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 export type DeleteBingoParams = {
   requester: User;

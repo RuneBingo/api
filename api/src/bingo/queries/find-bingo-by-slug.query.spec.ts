@@ -1,14 +1,16 @@
+import { NotFoundException } from '@nestjs/common';
+import { type TestingModule, Test } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
 import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
-import { TestingModule, Test } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { FindBingoBySlugHandler, FindBingoBySlugQuery } from './find-bingo-by-slug.query';
-import { NotFoundException } from '@nestjs/common';
-import { Bingo } from '../bingo.entity';
 import { User } from '@/user/user.entity';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
+
+import { FindBingoBySlugHandler, FindBingoBySlugQuery } from './find-bingo-by-slug.query';
+import { Bingo } from '../bingo.entity';
 
 describe('FindBingoBySlugHandler', () => {
   let module: TestingModule;
@@ -73,7 +75,6 @@ describe('FindBingoBySlugHandler', () => {
     expect(bingo).toBeDefined();
     expect(bingo.slug).toBe(expectedBingo.slug);
   });
-
 
   it('returns the bingo if private and non-participant moderator user', async () => {
     const requester = seedingService.getEntity(User, 'zezima');

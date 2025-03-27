@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource, IsNull } from 'typeorm';
 
+import { Roles } from '@/auth/roles/roles.constants';
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
 import { SeedingService } from '@/db/seeding/seeding.service';
@@ -9,8 +11,6 @@ import { i18nModule } from '@/i18n';
 import { User } from '../user.entity';
 import { SearchUsersHandler } from './search-users.handler';
 import { SearchUsersQuery, type SearchUsersResult } from './search-users.query';
-import { Roles } from '@/auth/roles/roles.constants';
-import { DataSource, IsNull } from 'typeorm';
 
 describe('SearchUsersHandler', () => {
   let module: TestingModule;
@@ -51,7 +51,7 @@ describe('SearchUsersHandler', () => {
   });
 
   it('ignores status filter if the requester is not a moderator', async () => {
-    let requester = seedingService.getEntity(User, 'b0aty');
+    const requester = seedingService.getEntity(User, 'b0aty');
     const expectedUsers = await dataSource.getRepository(User).find({
       where: {
         disabledAt: IsNull(),
@@ -69,7 +69,7 @@ describe('SearchUsersHandler', () => {
     });
 
     const result = await handler.execute(query);
-    
+
     assertExpectedUsers(result, expectedUsers);
   });
 

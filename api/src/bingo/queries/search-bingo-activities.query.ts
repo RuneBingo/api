@@ -1,11 +1,11 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { Query, QueryBus, QueryHandler } from '@nestjs/cqrs';
+import { Query, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
 import { Activity } from '@/activity/activity.entity';
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { type PaginatedDtoWithoutTotal } from '@/db/dto/paginated.dto';
 import { resolvePaginatedQueryWithoutTotal, type PaginatedQueryParams } from '@/db/paginated-query.utils';
 import { I18nTranslations } from '@/i18n/types';
@@ -13,7 +13,6 @@ import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 import { BingoPolicies } from '../bingo.policies';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 export type SearchBingoActivitiesParams = PaginatedQueryParams<{
   requester: User;

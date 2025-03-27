@@ -1,7 +1,9 @@
 import Joi from 'joi';
-import { Seeder } from './seeder';
+
 import { Bingo } from '@/bingo/bingo.entity';
 import { slugifyTitle } from '@/bingo/bingo.util';
+
+import { Seeder } from './seeder';
 
 type BingoSeed = {
   createdById: number;
@@ -38,7 +40,7 @@ const bingoSeedSchema = Joi.object<Record<string, BingoSeed>>().pattern(
     startedAt: Joi.date().optional(),
     endedAt: Joi.date().optional(),
     canceledAt: Joi.date().optional(),
-    deletedAt: Joi.date().optional()
+    deletedAt: Joi.date().optional(),
   }),
 );
 

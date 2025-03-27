@@ -1,15 +1,17 @@
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { type TestingModule, Test } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { Activity } from '@/activity/activity.entity';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 import { configModule } from '@/config';
 import { dbModule } from '@/db';
 import { SeedingService } from '@/db/seeding/seeding.service';
 import { i18nModule } from '@/i18n';
 import { User } from '@/user/user.entity';
-import { TestingModule, Test } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { SearchBingoActivitiesHandler, SearchBingoActivitiesQuery } from './search-bingo-activities.query';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Bingo } from '../bingo.entity';
-import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 describe('SearchUserActivitiesHandler', () => {
   let module: TestingModule;
@@ -63,7 +65,6 @@ describe('SearchUserActivitiesHandler', () => {
     await expect(handler.execute(query)).rejects.toThrow(ForbiddenException);
   });
 
-  
   it('return the user activities if the user is not participant but moderator', async () => {
     const requester = seedingService.getEntity(User, 'zezima');
     const query = new SearchBingoActivitiesQuery({
@@ -83,5 +84,4 @@ describe('SearchUserActivitiesHandler', () => {
 
     await expect(handler.execute(query)).resolves.not.toThrow();
   });
-
 });

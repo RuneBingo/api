@@ -53,14 +53,14 @@ export abstract class Seeder<Entity extends ObjectLiteral, Schema> {
       const identifier = await this.getIdentifier(entity);
       const existing = await repository.findOne({
         where: identifier,
-        withDeleted: true
-      })
+        withDeleted: true,
+      });
 
       if (existing) {
         if (existing.deletedAt) {
-          await repository.save({...existing, ...entity, deletedAt: null});
+          await repository.save({ ...existing, ...entity, deletedAt: null });
         } else {
-          await repository.save({...existing, ...entity});
+          await repository.save({ ...existing, ...entity });
         }
       } else {
         await repository.save(entity);
@@ -89,7 +89,6 @@ export abstract class Seeder<Entity extends ObjectLiteral, Schema> {
       const identifier = await this.getIdentifier(entity);
       const key = identifierToKeyMap.get(JSON.stringify(identifier));
       if (!key) continue;
-      
 
       this.entityMapping.set(key, entity);
     }

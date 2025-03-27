@@ -38,11 +38,12 @@ export class SearchBingosHandler {
     const { requester, search, status, isPrivate, ...pagination } = query.params;
 
     let scope = this.bingoRepository.createQueryBuilder('bingo');
-    search
-      ? scope.where('bingo.title ILIKE :search', {
-          search: `%${search}%`,
-        })
-      : null;
+    if (search) {
+      scope.where('bingo.title ILIKE :search', {
+        search: `%${search}%`,
+      });
+    }
+
     this.applyIsPrivate(scope, isPrivate);
     this.applyStatus(scope, status);
     scope = new ViewBingoScope(requester, scope).resolve();
