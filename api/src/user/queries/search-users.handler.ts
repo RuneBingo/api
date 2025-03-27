@@ -17,15 +17,14 @@ export class SearchUsersHandler {
   async execute(query: SearchUsersQuery): Promise<SearchUsersResult> {
     const { requester, search, status, ...pagination } = query.params;
 
-    let scope = this.repository
-      .createQueryBuilder('user')
-      .where('user.username ILIKE :search', { search: `%${search}%` });
+    let scope = this.repository.createQueryBuilder('user');
+    if (search) {
+      scope.where('user.username ILIKE :search', { search: `%${search}%` });
+    }
 
     scope = new ViewUserScope(requester, scope).resolve();
 
-    if (!requester || !userHasRole(requester, Roles.Moderator)) {
-      scope = scope.andWhere('user.disabled_at IS NULL');
-    } else {
+    if (requester && userHasRole(requester, Roles.Moderator)) {
       this.applyStatus(scope, status);
     }
 
