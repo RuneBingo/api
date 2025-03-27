@@ -3,7 +3,8 @@
         "titleNotUnique": "A bingo with this title already exists.",
         "forbidden": "You cannot create this bingo.",
         "startDateBeforeEndDate": "The start date must be before the end date.",
-        "registrationDateAfterStartDate": "The registration date must be before the start date."
+        "registrationDateAfterStartDate": "The registration date must be before the start date.",
+        "activeBingoAlreadyExists": "You already have an active bingo."
     },
     "findById": {
         "notFound": "The bingo doesn't exist."
@@ -22,7 +23,8 @@
     },
     "cancelBingo": {
         "bingoNotFound": "No bingo with this id was found.",
-        "forbidden": "You are not authorized to cancel this bingo."
+        "forbidden": "You are not authorized to cancel this bingo.",
+        "alreadyCanceled": "Bingo is already canceled."
     },
     "searchBingoActivities": {
         "bingoNotFound": "No bingo with this id was found."

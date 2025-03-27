@@ -1,20 +1,22 @@
-import { Query, QueryBus, QueryHandler } from '@nestjs/cqrs';
+import { Query, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { I18nService } from 'nestjs-i18n';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import {
   resolvePaginatedQueryWithoutTotal,
   type PaginatedQueryParams,
   type PaginatedResultWithoutTotal,
 } from '@/db/paginated-query.utils';
-import { I18nTranslations } from '@/i18n/types';
 import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
+import { ViewBingoScope } from '../scopes/view-bingo.scope';
 
 export type SearchBingosParams = PaginatedQueryParams<{
   requester: User | undefined;
+  search?: string;
+  status?: string;
+  isPrivate?: boolean;
 }>;
 
 export type SearchBingosResult = PaginatedResultWithoutTotal<Bingo>;
@@ -30,25 +32,42 @@ export class SearchBingosHandler {
   constructor(
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
-    private readonly queryBus: QueryBus,
-    private readonly i18nService: I18nService<I18nTranslations>,
   ) {}
 
   async execute(query: SearchBingosQuery): Promise<SearchBingosResult> {
-    const { requester, ...pagination } = query.params;
+    const { requester, search, status, isPrivate, ...pagination } = query.params;
 
-    const bingos = this.bingoRepository.createQueryBuilder('bingo');
+    let scope = this.bingoRepository.createQueryBuilder('bingo');
+    search
+      ? scope.where('bingo.title ILIKE :search', {
+          search: `%${search}%`,
+        })
+      : null;
+    this.applyIsPrivate(scope, isPrivate);
+    this.applyStatus(scope, status);
+    scope = new ViewBingoScope(requester, scope).resolve();
 
-    if (!requester) {
-      bingos.where('bingo.private = false');
-    } else {
-      bingos.leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = bingo.id');
-      bingos.where(
-        '(bingo.private = false OR bingoParticipant.user_id = :requesterId OR :requesterRole IN (:...roles))',
-        { requesterId: requester.id, roles: ['moderator', 'admin'], requesterRole: requester.role },
-      );
+    return resolvePaginatedQueryWithoutTotal(scope, pagination);
+  }
+
+  private applyStatus(scope: SelectQueryBuilder<Bingo>, status: SearchBingosParams['status']) {
+    switch (status) {
+      case 'pending':
+        return scope.andWhere('(bingo.startedAt IS NULL AND bingo.canceledAt IS NULL)');
+      case 'started':
+        return scope.andWhere('(bingo.startedAt IS NOT NULL AND bingo.endedAt IS NULL AND bingo.canceledAt IS NULL)');
+      case 'ended':
+        return scope.andWhere(
+          '(bingo.startedAt IS NOT NULL AND bingo.endedAt IS NOT NULL AND bingo.canceledAt IS NULL)',
+        );
+      case 'canceled':
+        return scope.andWhere('(bingo.canceledAt IS NOT NULL)');
     }
+  }
 
-    return resolvePaginatedQueryWithoutTotal(bingos, pagination);
+  private applyIsPrivate(scope: SelectQueryBuilder<Bingo>, isPrivate: SearchBingosParams['isPrivate']) {
+    if (isPrivate !== undefined) {
+      return scope.andWhere('bingo.private = :isPrivate', { isPrivate: isPrivate });
+    }
   }
 }

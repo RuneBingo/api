@@ -154,7 +154,7 @@ describe('CreateBingoHandler', () => {
     expect(bingo.description).toBe('Les quebec');
     expect(bingo.private).toBe(false);
     expect(bingo.width).toBe(5);
-    expect(bingo.createdById).toBe(3);
+    expect(bingo.createdById).toBe(requester.id);
     expect(bingo.height).toBe(5);
     expect(bingo.fullLineValue).toBe(100);
     expect(bingo.startDate).toBe('2025-04-01');
@@ -183,7 +183,7 @@ describe('CreateBingoHandler', () => {
   });
 
   it('creates a new bingo even tho slug collides with deleted bingo', async () => {
-    const requester = seedingService.getEntity(User, 'raph')
+    const requester = seedingService.getEntity(User, 'b0aty')
 
     
     const command = new CreateBingoCommand({
@@ -206,7 +206,7 @@ describe('CreateBingoHandler', () => {
     expect(bingo.description).toBe('Les quebec');
     expect(bingo.private).toBe(false);
     expect(bingo.width).toBe(5);
-    expect(bingo.createdById).toBe(2);
+    expect(bingo.createdById).toBe(requester.id);
     expect(bingo.height).toBe(5);
     expect(bingo.fullLineValue).toBe(100);
     expect(bingo.startDate).toBe('2025-04-01');

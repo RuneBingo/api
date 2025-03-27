@@ -4,13 +4,13 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { DataSource, Repository } from 'typeorm';
 
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 import { BingoPolicies } from '../bingo.policies';
 import { BingoDeletedEvent } from '../events/bingo-deleted.event';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 export type DeleteBingoParams = {
   requester: User;
@@ -32,8 +32,9 @@ export class DeleteBingoHandler {
     private readonly bingoRepository: Repository<Bingo>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    @InjectRepository(BingoParticipant)
+    private readonly bingoParticipantRepository: Repository<BingoParticipant>,
     private readonly i18nService: I18nService<I18nTranslations>,
-    private readonly queryBus: QueryBus,
     private readonly eventBus: EventBus,
   ) {}
 
@@ -46,13 +47,12 @@ export class DeleteBingoHandler {
       throw new NotFoundException(this.i18nService.t('bingo.deleteBingo.bingoNotFound'));
     }
 
-    const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingoId }));
-
-    const participant = bingoParticipants.find((participant) => {
-      return participant.userId === requester.id;
+    const bingoParticipant = await this.bingoParticipantRepository.findOneBy({
+      bingoId: bingo.id,
+      userId: requester.id,
     });
 
-    if (!new BingoPolicies(requester).canDelete(participant)) {
+    if (!new BingoPolicies(requester).canDelete(bingoParticipant)) {
       throw new ForbiddenException(this.i18nService.t('bingo.deleteBingo.forbidden'));
     }
 

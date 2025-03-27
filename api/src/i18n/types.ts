@@ -30,6 +30,7 @@ export type I18nTranslations = {
             "forbidden": string;
             "startDateBeforeEndDate": string;
             "registrationDateAfterStartDate": string;
+            "activeBingoAlreadyExists": string;
             "startDateAfterEndDate": string;
         };
         "findById": {
@@ -50,6 +51,7 @@ export type I18nTranslations = {
         "cancelBingo": {
             "bingoNotFound": string;
             "forbidden": string;
+            "alreadyCanceled": string;
         };
         "searchBingoActivities": {
             "bingoNotFound": string;

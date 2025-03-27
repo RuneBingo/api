@@ -81,15 +81,24 @@ export class BingoController {
   @Get()
   @ApiOperation({ summary: 'Get bingos paginated list of bingos' })
   @ApiOkResponse({ description: 'Here are the bingos.' })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'status', enum: ['pending', 'started', 'ended', 'canceled'], required: false })
+  @ApiQuery({ name: 'private', type: Boolean, required: false })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'offset', required: false })
   async getBingos(
     @Req() req: Request,
+    @Query('search') search: string = '',
+    @Query('status') status: string | undefined = undefined,
+    @Query('private') isPrivate: string | undefined = undefined,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ): Promise<PaginatedBingosDto> {
     const params = {
       requester: req.userEntity,
+      search,
+      status,
+      isPrivate: isPrivate === 'true' ? true : isPrivate === 'false' ? false : undefined,
       limit: limit ? parseInt(limit) : undefined,
       offset: offset ? parseInt(offset) : undefined,
     } satisfies SearchBingosParams;

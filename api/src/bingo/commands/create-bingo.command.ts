@@ -111,7 +111,7 @@ export class CreateBingoHandler {
     }
 
     if (!(await new BingoPolicies(requester).canCreate(this.bingoRepository))) {
-      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.forbidden'));
+      throw new ForbiddenException(this.i18nService.t('bingo.createBingo.activeBingoAlreadyExists'));
     }
 
     const bingo = new Bingo();

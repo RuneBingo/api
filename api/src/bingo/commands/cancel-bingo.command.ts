@@ -1,16 +1,16 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Command, CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Repository } from 'typeorm';
 
-import { GetBingoParticipantsQuery } from '@/bingo-participant/queries/get-bingo-participants.query';
 import { I18nTranslations } from '@/i18n/types';
 import { User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 import { BingoPolicies } from '../bingo.policies';
 import { BingoCanceledEvent } from '../events/bingo-canceled.event';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 export type CancelBingoParams = {
   requester: User;
@@ -30,8 +30,9 @@ export class CancelBingoHandler {
   constructor(
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
+    @InjectRepository(BingoParticipant)
+    private readonly bingoParticipantRepository: Repository<BingoParticipant>,
     private readonly i18nService: I18nService<I18nTranslations>,
-    private readonly queryBus: QueryBus,
     private readonly eventBus: EventBus,
   ) {}
 
@@ -44,13 +45,16 @@ export class CancelBingoHandler {
       throw new NotFoundException(this.i18nService.t('bingo.deleteBingo.bingoNotFound'));
     }
 
-    const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingoId }));
+    if (bingo.canceledAt) {
+      throw new BadRequestException(this.i18nService.t('bingo.cancelBingo.alreadyCanceled'));
+    }
 
-    const participant = bingoParticipants.find((participant) => {
-      return participant.userId === requester.id;
+    const bingoParticipant = await this.bingoParticipantRepository.findOneBy({
+      bingoId: bingo.id,
+      userId: requester.id,
     });
 
-    if (!new BingoPolicies(requester).canCancel(participant, bingo)) {
+    if (!new BingoPolicies(requester).canCancel(bingoParticipant, bingo)) {
       throw new ForbiddenException(this.i18nService.t('bingo.cancelBingo.forbidden'));
     }
 

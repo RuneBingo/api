@@ -9,11 +9,14 @@ import { i18nModule } from '@/i18n';
 import { User } from '../user.entity';
 import { SearchUsersHandler } from './search-users.handler';
 import { SearchUsersQuery, type SearchUsersResult } from './search-users.query';
+import { Roles } from '@/auth/roles/roles.constants';
+import { DataSource, IsNull } from 'typeorm';
 
 describe('SearchUsersHandler', () => {
   let module: TestingModule;
   let seedingService: SeedingService;
   let handler: SearchUsersHandler;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
@@ -23,6 +26,7 @@ describe('SearchUsersHandler', () => {
 
     handler = module.get(SearchUsersHandler);
     seedingService = module.get(SeedingService);
+    dataSource = module.get(DataSource);
 
     await seedingService.initialize();
   });
@@ -47,8 +51,17 @@ describe('SearchUsersHandler', () => {
   });
 
   it('ignores status filter if the requester is not a moderator', async () => {
-    const requester = seedingService.getEntity(User, 'b0aty');
-    const expectedUsers = [seedingService.getEntity(User, 'b0aty')];
+    let requester = seedingService.getEntity(User, 'b0aty');
+    const expectedUsers = await dataSource.getRepository(User).find({
+      where: {
+        disabledAt: IsNull(),
+      },
+      withDeleted: false,
+      order: {
+        usernameNormalized: 'ASC',
+      },
+    });
+    requester.role = Roles.User;
 
     const query = new SearchUsersQuery({
       requester,
@@ -56,7 +69,7 @@ describe('SearchUsersHandler', () => {
     });
 
     const result = await handler.execute(query);
-
+    
     assertExpectedUsers(result, expectedUsers);
   });
 
@@ -76,6 +89,8 @@ describe('SearchUsersHandler', () => {
 });
 
 const assertExpectedUsers = (result: SearchUsersResult, expectedUsers: User[]) => {
+  expect(expectedUsers.length).toBeGreaterThan(0);
+  expect(expectedUsers.length).toBe(result.items.length);
   result.items.forEach((item, i) => {
     expect(expectedUsers[i]).not.toBeNull();
     expect(item.id).toBe(expectedUsers[i].id);

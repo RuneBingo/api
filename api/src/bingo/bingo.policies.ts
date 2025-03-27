@@ -34,7 +34,7 @@ export class BingoPolicies {
     return true;
   }
 
-  canDelete(participant: BingoParticipant | undefined) {
+  canDelete(participant: BingoParticipant | null) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
 
     if (!requesterIsModerator && (!participant || !participantHasBingoRole(participant, BingoRoles.Owner))) {
@@ -44,7 +44,7 @@ export class BingoPolicies {
     return true;
   }
 
-  canCancel(participant: BingoParticipant | undefined, bingo: Bingo) {
+  canCancel(participant: BingoParticipant | null, bingo: Bingo) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
 
     if (bingo.canceledAt || bingo.endedAt) {

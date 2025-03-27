@@ -34,10 +34,7 @@ export class FindBingoBySlugHandler {
   async execute(query: FindBingoBySlugQuery): Promise<FindBingoBySlugResult> {
     const { slug, requester } = query.params;
 
-    const scope = this.bingoRepository
-      .createQueryBuilder('bingo')
-      .where('bingo.slug = :slug', { slug: slug })
-      .leftJoin('bingo_participant', 'bingoParticipant', 'bingoParticipant.bingo_id = bingo.id');
+    const scope = this.bingoRepository.createQueryBuilder('bingo').where('bingo.slug = :slug', { slug: slug });
 
     const bingo = await new ViewBingoScope(requester, scope).resolve().getOne();
 
