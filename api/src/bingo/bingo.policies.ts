@@ -58,10 +58,10 @@ export class BingoPolicies {
     return true;
   }
 
-  canViewActivities(participant: BingoParticipant | undefined) {
+  canViewActivities(participant: BingoParticipant | null) {
     const requesterIsModerator = userHasRole(this.requester, Roles.Moderator);
 
-    if (!participant || (!participantHasBingoRole(participant, BingoRoles.Organizer) && !requesterIsModerator)) {
+    if (!requesterIsModerator && (!participant || !participantHasBingoRole(participant, BingoRoles.Organizer))) {
       return false;
     }
 

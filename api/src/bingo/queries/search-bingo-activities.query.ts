@@ -13,6 +13,7 @@ import { type User } from '@/user/user.entity';
 
 import { Bingo } from '../bingo.entity';
 import { BingoPolicies } from '../bingo.policies';
+import { BingoParticipant } from '@/bingo-participant/bingo-participant.entity';
 
 export type SearchBingoActivitiesParams = PaginatedQueryParams<{
   requester: User;
@@ -34,8 +35,9 @@ export class SearchBingoActivitiesHandler {
     private readonly activityRepository: Repository<Activity>,
     @InjectRepository(Bingo)
     private readonly bingoRepository: Repository<Bingo>,
+    @InjectRepository(BingoParticipant)
+    private readonly bingoParticipantRepository: Repository<BingoParticipant>,
     private readonly i18nService: I18nService<I18nTranslations>,
-    private readonly queryBus: QueryBus,
   ) {}
 
   async execute(query: SearchBingoActivitiesQuery): Promise<SearchBingoActivitiesResult> {
@@ -47,13 +49,12 @@ export class SearchBingoActivitiesHandler {
       throw new NotFoundException(this.i18nService.t('bingo.searchBingoActivities.bingoNotFound'));
     }
 
-    const bingoParticipants = await this.queryBus.execute(new GetBingoParticipantsQuery({ bingoId: bingoId }));
-
-    const participant = bingoParticipants.find((participant) => {
-      return participant.userId === requester.id;
+    const bingoParticipant = await this.bingoParticipantRepository.findOneBy({
+      bingoId: bingo.id,
+      userId: requester.id,
     });
 
-    if (!new BingoPolicies(requester).canViewActivities(participant)) {
+    if (!new BingoPolicies(requester).canViewActivities(bingoParticipant)) {
       throw new ForbiddenException(this.i18nService.t('bingo.activity.forbidden'));
     }
 
